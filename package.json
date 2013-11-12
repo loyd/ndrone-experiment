@@ -1,0 +1,33 @@
+{
+    "name"        : "ndrone",
+    "description" : "Quadrocopter based on nodejs.",
+    "version"     : "0.0.0",
+    "keywords"    : ["copter"],
+
+    "contributors" : [
+        "Paul Loyd <pavelko95@gmail.com>",
+        "Mike H. Hawley <mikehhawley@gmail.com>"
+    ],
+
+    "engines" : {
+        "node" : ">=0.10"
+    },
+
+    "repository" : {
+        "type" : "git",
+        "url"  : "http://github.com/loyd/ndrone.git"
+    },
+
+    "devDependencies" : {
+        "typescript" : ">=0.9",
+        "tsd" : "git://github.com/DefinitelyTyped/tsd#develop-0.5.x"
+    },
+
+    "dependencies" : {
+        "ffi" : "1.x",
+        "ref" : "*",
+        "ref-array"  : "*",
+        "ref-struct" : "*",
+        "ref-union"  : "*"
+    }
+}

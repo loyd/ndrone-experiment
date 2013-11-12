@@ -2,6 +2,13 @@ ndrone
 ======
 Quadrocopter based on nodejs.
 
+Start development
+-----------------
+```sh
+npm install
+./node_modules/.bin/tsd reinstall
+```
+
 Commit message conventions
 --------------------------
 [Please use AngularJS conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#).
@@ -40,7 +47,7 @@ Amendments to code style
 * do not use `{}` for single operators
 * multiline ternars:  
 
-```
+```javascript
 a = b ? c
   : d ? t
   : e

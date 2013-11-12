@@ -1,0 +1,17 @@
+{
+    "typingsPath" : "definitions",
+    "version" : "v4",
+    "repo" : "borisyankov/DefinitelyTyped",
+    "ref"  : "master",
+    "installed" : {
+        "node/node.d.ts" : {
+            "commit" : "db3507a7e6b4dd9fbc85aadb314d85bafbaf48fc",
+            "blob"   : "0198b06b5e24cf111b098e456617b2e459aefe57"
+        },
+
+        "node-ffi/node-ffi.d.ts" : {
+            "commit" : "db3507a7e6b4dd9fbc85aadb314d85bafbaf48fc",
+            "blob"   : "301331edc2de5becadae608ed673bdec221e7a28"
+        }
+    }
+}
