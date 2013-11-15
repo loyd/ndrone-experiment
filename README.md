@@ -2,6 +2,15 @@ ndrone
 ======
 Quadrocopter based on nodejs.
 
+                         ndrone [master]
+                     availability of workers
+                    ┌───────────────────────┐
+    flight [worker] │    attitudes data     │ fpv [worker]
+    ────────────────┤   ════════════════>   ├───────────────
+        sensors     │        control        │ OSD
+     stabilization  │   <════════════════   │ transfer video
+     rotors control │                       │ driving
+
 Start development
 -----------------
 ```sh

@@ -28,6 +28,7 @@
         "ref" : "*",
         "ref-array"  : "*",
         "ref-struct" : "*",
-        "ref-union"  : "*"
+        "ref-union"  : "*",
+        "better-assert" : "*"
     }
 }
