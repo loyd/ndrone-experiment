@@ -1,5 +1,8 @@
-TSFLAGS = -m commonjs
+TSFLAGS = -m commonjs -t ES5
 OUT = build
+
+MASTER = src/ndrone.ts
+WORKERS = src/flight/flight.ts src/fpv/fpv.ts
 
 TSC = ./node_modules/.bin/tsc
 tmp = $(OUT)
@@ -8,9 +11,7 @@ all:
 	@echo 'Use make <task>.'
 
 build:
-	$(TSC) $(TSFLAGS) src/ndrone.ts --outDir $(tmp)/out
-	$(TSC) $(TSFLAGS) src/flight/flight.ts --outDir $(tmp)/out/flight
-	$(TSC) $(TSFLAGS) src/fpv/fpv.ts --outDir $(tmp)/out/fpv
+	$(TSC) $(TSFLAGS) $(MASTER) $(WORKERS) --outDir $(tmp)/out
 	cp config.json $(tmp)/config.json
 
 package: tmp = /tmp/ndrone
