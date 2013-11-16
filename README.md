@@ -22,6 +22,16 @@ Commit message conventions
 --------------------------
 [Please use AngularJS conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#).
 
+Commiting features
+------------------
+1. If feature consists of one commit then just push it to current branch.  
+2. If feature requires more than one commit then:  
+  2a. create branch `{feature name}`;  
+  2b. commits witin branch won't be like `feat`, but `chore/fix/etc`;  
+  3c. after finishing do `pull` and `rebase` with **master**;  
+  3d. `merge` with `--edit --no-ff` and name `feat({feature name}): {feature description}`;  
+  3e. then `push`.  
+
 Order of items within classes
 -----------------------------
 * static fields
