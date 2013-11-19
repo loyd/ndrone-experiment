@@ -23,7 +23,7 @@ tree:
 	@tree -CFa --dirsfirst -I '.git|node_modules|definitions' | head -n -2
 
 labels:
-	@egrep -Hnor --include '*.ts' '//#(TODO|FIXME|XXX):.*' src lib |\
+	@egrep -Hnor --include '*.ts' '//#(TODO|FIXME|XXX):.*' src libs |\
 		awk -F'://#' '\
 			/#FIXME:/ { print "\033[0;31m"$$2"\033[0m", "("$$1")" }\
 			/#TODO:/  { print "\033[0;32m"$$2"\033[0m", "("$$1")" }\
