@@ -18,6 +18,15 @@ npm install
 ./node_modules/.bin/tsd reinstall
 ```
 
+Use `make`:
+```sh
+make build   # build project to build/
+make package # build project to /tmp/ and pack into build/
+make tree    # get structure of project
+make labels  # generate list of #TODOs, #FIXMEs and #XXXs
+make clean   # get rid of the garbage
+```
+
 Commit message conventions
 --------------------------
 [Please use AngularJS conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#).
@@ -57,14 +66,14 @@ Amendments to code style
 ------------------------
 * do not do `@const`
 * do `if(...)`, `while(...)`, etc
-* prefer nodejs features (do not use `.charAt()`)
+* prefer nodejs features (do not use `.charAt()` etc)
 * use `file_names_like_this`
 * use `lowerCamelCase` for TS enumerators
 * identation in 4 whitespaces
 * 80-90 symbols per line
 * always align multiline arguments or conditions for readability
 * do not use `{}` for single operators
-* multiline ternars:  
+* multiline ternars:
 
 ```javascript
 a = b ? c
@@ -72,7 +81,8 @@ a = b ? c
   : e
 ```  
 
-* make prototype extentions in `lib/` only
+* make prototype extentions in `libs/` only
 * always align `:` or `=` by blocks with difference in < 3 symbols
 * `:` without whitespace after variable, but before type
 * name imported modules equal to they real names
+* use `//#TODO: ...`, `//#FIXME: ...` and `//#XXX: ...`
