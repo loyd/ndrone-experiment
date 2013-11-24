@@ -13,18 +13,16 @@ Quadrocopter based on nodejs.
 
 Start development
 -----------------
-```sh
-npm install
-./node_modules/.bin/tsd reinstall
-```
+`npm install && make install-tsd`
 
 Use `make`:
 ```sh
-make build   # build project to build/
-make package # build project to /tmp/ and pack into build/
-make tree    # get structure of project
-make labels  # generate list of #TODOs, #FIXMEs and #XXXs
-make clean   # get rid of the garbage
+make build       # build project to build/
+make package     # build project to /tmp/ and pack into build/
+make install-tsd # install typescript definitions (.d.ts)
+make tree        # get structure of project
+make labels      # generate list of #TODOs, #FIXMEs and #XXXs
+make clean       # get rid of the garbage
 ```
 
 Commit message conventions
