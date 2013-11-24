@@ -20,7 +20,7 @@ package: tmp = /tmp/ndrone
 package: build
 	npm shrinkwrap && mv npm-shrinkwrap.json $(tmp)/
 	@mkdir -p $(OUT)
-	cd $(tmp) && tar -cf $(CURDIR)/$(OUT)/ndrone-`date +%s`.tar *
+	cd $(tmp) && tar -cf "$(CURDIR)/$(OUT)/ndrone-`date +%s`.tar" *
 
 load = curl -L --create-dirs $(TSDREPO)/$1/$1.d.ts -o $(TSDDIR)/$1/$1.d.ts
 install-tsd:
