@@ -15,6 +15,7 @@ all:
 
 build:
 	$(TSC) $(TSFLAGS) $(MASTER) $(WORKERS) --outDir $(tmp)/out
+	cp package.json $(tmp)
 
 package: tmp = /tmp/ndrone
 package: build
