@@ -19,8 +19,7 @@
     },
 
     "devDependencies" : {
-        "typescript" : ">=0.9",
-        "tsd" : "git://github.com/DefinitelyTyped/tsd#develop-0.5.x"
+        "typescript" : ">=0.9"
     },
 
     "dependencies" : {
@@ -28,7 +27,6 @@
         "ref" : "*",
         "ref-array"  : "*",
         "ref-struct" : "*",
-        "ref-union"  : "*",
-        "better-assert" : "*"
+        "ref-union"  : "*"
     }
 }

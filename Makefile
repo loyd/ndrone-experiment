@@ -7,6 +7,9 @@ WORKERS = src/flight/flight.ts src/fpv/fpv.ts
 TSC = ./node_modules/.bin/tsc
 tmp = $(OUT)
 
+TSDREPO = http://github.com/borisyankov/DefinitelyTyped/raw/master
+TSDDIR = definitions
+
 all:
 	@echo 'Use make <task>.'
 
@@ -18,6 +21,11 @@ package: build
 	npm shrinkwrap && mv npm-shrinkwrap.json $(tmp)/
 	@mkdir -p $(OUT)
 	cd $(tmp) && tar -cf $(CURDIR)/$(OUT)/ndrone-`date +%s`.tar *
+
+load = curl -L --create-dirs $(TSDREPO)/$1/$1.d.ts -o $(TSDDIR)/$1/$1.d.ts
+install-tsd:
+	$(call load,node)
+	$(call load,node-ffi)
 
 tree:
 	@tree -CFa --dirsfirst -I '.git|node_modules|definitions' | head -n -2
