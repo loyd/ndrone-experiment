@@ -14,8 +14,8 @@ all:
 	@echo 'Use make <task>.'
 
 build:
-	$(TSC) $(TSFLAGS) $(MASTER) $(WORKERS) --outDir $(tmp)/out
-	cp package.json $(tmp)
+	$(TSC) $(TSFLAGS) $(MASTER) $(WORKERS) --outDir $(tmp)
+	cp package.json $(tmp)/
 
 package: tmp = /tmp/ndrone
 package: build
