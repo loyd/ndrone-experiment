@@ -19,6 +19,7 @@ Use `make`:
 ```sh
 make build       # build project to build/
 make package     # build project to /tmp/ and pack into build/
+make lint        # use tslint to check src/ and libs/
 make install-tsd # install typescript definitions (.d.ts)
 make tree        # get structure of project
 make labels      # generate list of #TODOs, #FIXMEs and #XXXs

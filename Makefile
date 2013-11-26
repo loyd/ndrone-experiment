@@ -5,6 +5,7 @@ MASTER = src/ndrone.ts
 WORKERS = src/flight/flight.ts src/fpv/fpv.ts
 
 TSC = ./node_modules/.bin/tsc
+TSLINT = ./node_modules/.bin/tslint
 tmp = $(OUT)
 
 TSDREPO = http://github.com/borisyankov/DefinitelyTyped/raw/master
@@ -22,6 +23,9 @@ package: build
 	npm shrinkwrap && mv npm-shrinkwrap.json $(tmp)/
 	@mkdir -p $(OUT)
 	cd $(tmp) && tar -cf "$(CURDIR)/$(OUT)/ndrone-`date +%s`.tar" *
+
+lint:
+	@for name in $$(find libs src -name '*.ts'); do $(TSLINT) -f $$name; done
 
 load = curl -L --create-dirs $(TSDREPO)/$1/$1.d.ts -o $(TSDDIR)/$1/$1.d.ts
 install-tsd:
