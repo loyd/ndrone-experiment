@@ -20,14 +20,16 @@
 
     "devDependencies" : {
         "typescript" : ">=0.9",
-        "tslint" : "*"
+        "browserify" : ">=2.36",
+        "tslint" : ">=0.3"
     },
 
     "dependencies" : {
-        "ffi" : "1.x",
+        "ffi" : "~1",
         "ref" : "*",
         "ref-array"  : "*",
         "ref-struct" : "*",
-        "ref-union"  : "*"
+        "ref-union"  : "*",
+        "websocket" : "~1"
     }
 }
