@@ -2,14 +2,19 @@ ndrone
 ======
 Quadrocopter based on nodejs.
 
-                         ndrone [master]
-                     availability of workers
-                    ┌───────────────────────┐
-    flight [worker] │    attitudes data     │ fpv [worker]
-    ────────────────┤   ════════════════>   ├───────────────
-        sensors     │        control        │ OSD
-     stabilization  │   <════════════════   │ transfer video
-     rotors control │                       │ driving
+                    ┌─────────────────┐
+                      ndrone [master]
+                     ────────────────
+                     • availability
+                     • communication
+                    └─────────────────┘
+    ┌─────────────────┐              ┌─────────────────┐               ┌──────────────────┐
+      flight [worker]      state         fpv [worker]    video & state   client [browser]  
+     ─────────────────  ═══════════>  ─────────────────  ════════════>  ────────────────── 
+     • sensors                        • capture                          • video decoding  
+     • stabilization    <═══════════  • video encoding   <════════════   • OSD             
+     • rotors control      control    • server              control      • driving         
+    └─────────────────┘              └─────────────────┘               └──────────────────┘
 
 Start development
 -----------------
@@ -17,13 +22,16 @@ Start development
 
 Use `make`:
 ```sh
-make build       # build project to build/
-make package     # build project to /tmp/ and pack into build/
-make lint        # use tslint to check src/ and libs/
-make install-tsd # install typescript definitions (.d.ts)
-make tree        # get structure of project
-make labels      # generate list of #TODOs, #FIXMEs and #XXXs
-make clean       # get rid of the garbage
+make              # same as `make package`
+make package      # build project to `/tmp/ndrone/` and pack into `build/`
+make build        # build project to `build/`
+make build/embed  # build embedded part to `build/embed`
+make build/client # build client part to `build/client`
+make lint         # use tslint to check `libs/`, `embed/` and `client/`
+make install-tsd  # install typescript definitions as `definitions/*/*.d.ts`
+make tree         # get structure of project
+make labels       # generate list of `#TODO`s, `#FIXME`s and `#XXX`s
+make clean        # get rid of the garbage
 ```
 
 Commit message conventions
