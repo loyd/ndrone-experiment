@@ -9,6 +9,9 @@ TSLINT = ./node_modules/.bin/tslint
 TSDREPO = http://github.com/borisyankov/DefinitelyTyped/raw/master
 TSDDIR  = definitions
 
+TSDLIST = node \
+		  node-ffi
+
 #### Parts
 EMBED = embed/ndrone.ts \
         embed/flight/flight.ts \
@@ -19,6 +22,7 @@ CLIENT = client/index.ts
 ################################################################################
 .DEFAULT_GOAL = package
 
+#### Targets
 build: build/embed build/client
 	cp package.json $(_out)
 
@@ -31,6 +35,7 @@ build/client: $(shell find libs client -name '*.ts') config.ts
 	$(TSC) $(TSFLAGS) $(CLIENT) --outDir $(_out)/client
 	cp $(shell find client -type f ! -name '*.ts') $(_out)/client
 
+#### Tasks
 package: _out = /tmp/ndrone
 package: build
 	npm shrinkwrap && mv npm-shrinkwrap.json $(_out)/
@@ -41,10 +46,18 @@ lint:
 	$(foreach file, $(shell find libs embed client -name '*.ts'), \
 		$(TSLINT) -f $(file)$(\n))
 
+setup:   setup\:nm   setup\:tsd
+update: update\:nm  update\:tsd
+
+setup\:nm:
+	npm install
+
+update\:nm:
+	npm update
+
 load = curl -L --create-dirs $(TSDREPO)/$1/$1.d.ts -o $(TSDDIR)/$1/$1.d.ts
-install-tsd:
-	$(call load,node)
-	$(call load,node-ffi)
+setup\:tsd update\:tsd:
+	$(foreach name, $(TSDLIST), $(call load,$(name))$(\n))
 
 tree:
 	@tree -CFa --dirsfirst -I '.git|node_modules|definitions|build' | head -n -2

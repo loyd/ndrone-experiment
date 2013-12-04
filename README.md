@@ -18,20 +18,24 @@ Quadrocopter based on nodejs.
 
 Start development
 -----------------
-`npm install && make install-tsd`
+`make setup`
 
 Use `make`:
 ```sh
-make              # same as `make package`
-make package      # build project to `/tmp/ndrone/` and pack into `build/`
-make build        # build project to `build/`
-make build/embed  # build embedded part to `build/embed`
-make build/client # build client part to `build/client`
-make lint         # use tslint to check `libs/`, `embed/` and `client/`
-make install-tsd  # install typescript definitions as `definitions/*/*.d.ts`
-make tree         # get structure of project
-make labels       # generate list of `#TODO`s, `#FIXME`s and `#XXX`s
-make clean        # get rid of the garbage
+#### Targets
+make                  # same as `make package`
+make package          # build project to `/tmp/ndrone/` and pack into `build/`
+make build            # build project to `build/`
+make build/embed      # build embedded part to `build/embed`
+make build/client     # build client part to `build/client`
+
+#### Tasks
+make setup[:nm|:tsd]  # development environment setup
+make update[:nm|:tsd] # development environment update
+make lint             # use tslint to check `libs/`, `embed/` and `client/`
+make tree             # print structure of project
+make labels           # generate list of #TODOs, #FIXMEs and #XXXs
+make clean            # get rid of the garbage
 ```
 
 Commit message conventions
