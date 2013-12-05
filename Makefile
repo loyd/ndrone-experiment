@@ -4,13 +4,18 @@ TSFLAGS = -m commonjs -t ES5
 
 #### Linter
 TSLINT = ./node_modules/.bin/tslint
+TSLINTFLAGS =
+
+#### Browser adapter
+BRFY = ./node_modules/.bin/browserify
+BRFYFLAGS = --dg
 
 #### Definitions
 TSDREPO = http://github.com/borisyankov/DefinitelyTyped/raw/master
 TSDDIR  = definitions
 
 TSDLIST = node \
-		  node-ffi
+          node-ffi
 
 #### Parts
 EMBED = embed/ndrone.ts \
@@ -24,23 +29,28 @@ CLIENT = client/index.ts
 
 #### Targets
 build: build/embed build/client
-	cp package.json $(_out)
 
 build/embed: $(shell find libs embed -name '*.ts') config.ts
-	mkdir -p $(@D)
+	mkdir -p $(_out)/embed
 	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(_out)
 
-build/client: $(shell find libs client -name '*.ts') config.ts
-	mkdir -p $(addprefix $(_out)/, $(shell find client -type d))
-	$(TSC) $(TSFLAGS) $(CLIENT) --outDir $(_out)/client
-	cp $(shell find client -type f ! -name '*.ts') $(_out)/client
+build/client: $(shell find libs client -type f) config.ts
+	mkdir -p $(addsuffix $(dir $(CLIENT)), /tmp/ndrone/_ $(_out)/)
+	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_$(dir $(CLIENT))
+	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_$(CLIENT:.ts=.js) -o $(_out)/$(CLIENT:.ts=.js)
+	rm -rf /tmp/ndrone/_$(dir $(CLIENT))
+	$(foreach file, $(shell find client -type f ! -name '*.ts'), \
+		mkdir -p $(_out)/$(dir $(file))$(\n) \
+		cp $(file) $(_out)/$(file)$(\n))
 
 #### Tasks
 package: _out = /tmp/ndrone
 package: build
-	npm shrinkwrap && mv npm-shrinkwrap.json $(_out)/
+	$(eval _PKGID = $(shell echo "obase=16; (`date +%s`-1384201244)/60" | bc))
+	cp package.json $(_out)
+	npm shrinkwrap && mv npm-shrinkwrap.json $(_out)
 	mkdir -p build
-	cd $(_out) && tar -cf "$(CURDIR)/build/ndrone-`date +%s`.tar" *
+	cd $(_out) && tar -cf "$(CURDIR)/build/ndrone-$(_PKGID).tar" *
 
 lint:
 	$(foreach file, $(shell find libs embed client -name '*.ts'), \
