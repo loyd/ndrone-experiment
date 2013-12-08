@@ -30,11 +30,11 @@ CLIENT = client/index.ts
 #### Targets
 build: build/embed build/client
 
-build/embed: $(shell find libs embed -name '*.ts') config.ts
+build/embed: $(shell find embed shared libs -name '*.ts') config.ts
 	mkdir -p $(_out)/embed
 	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(_out)
 
-build/client: $(shell find libs client -type f) config.ts
+build/client: $(shell find client shared libs -type f) config.ts
 	mkdir -p $(addsuffix $(dir $(CLIENT)), /tmp/ndrone/_ $(_out)/)
 	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_$(dir $(CLIENT))
 	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_$(CLIENT:.ts=.js) -o $(_out)/$(CLIENT:.ts=.js)
@@ -53,7 +53,7 @@ package: build
 	cd $(_out) && tar -cf "$(CURDIR)/build/ndrone-$(_PKGID).tar" *
 
 lint:
-	$(foreach file, $(shell find libs embed client -name '*.ts'), \
+	$(foreach file, $(shell find libs embed client shared -name '*.ts'), \
 		$(TSLINT) -f $(file)$(\n))
 
 setup:   setup\:nm   setup\:tsd
@@ -73,7 +73,7 @@ tree:
 	@tree -CFa --dirsfirst -I '.git|node_modules|definitions|build' | head -n -2
 
 labels:
-	@egrep -Hnor --include '*.ts' '//#(TODO|FIXME|XXX):.*' libs embed client |\
+	@egrep -Hnor --include '*.ts' '//#(TODO|FIXME|XXX):.*' libs embed client shared |\
 		awk -F'://#' '\
 			/#FIXME:/ { print "\033[0;31m"$$2"\033[0m", "("$$1")" }\
 			/#TODO:/  { print "\033[0;32m"$$2"\033[0m", "("$$1")" }\
