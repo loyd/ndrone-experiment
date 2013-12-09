@@ -42,15 +42,22 @@ Commit message conventions
 --------------------------
 [Please use AngularJS conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#).
 
-Commiting features
-------------------
-1. If feature consists of one commit then just push it to current branch.  
-2. If feature requires more than one commit then:  
-  2a. create branch `{feature name}`;  
-  2b. commits witin branch won't be like `feat`, but `chore/fix/etc`;  
-  3c. after finishing do `pull` and `rebase` with **master**;  
-  3d. `merge` with `--edit --no-ff` and name `feat({feature name}): {feature description}`;  
-  3e. then `push`.  
+Amendments to commit message conventions
+----------------------------------------
+1. Target contains sufficent path that one can definitely say what is message about.  
+  1a. Directory path ends with `/`.
+2. All extensions are specified, but `.ts`.
+3. Use `""` for quoting in commit messages.
+
+Committing
+----------
+1. If work was done in one commit then `push` to `master`.  
+2. If word requires more than one commit then:  
+  2a. create branch `{work name}`;  
+  2b. commit message conventions are still actual within branches;  
+  2c. when work is done, do `pull` and `rebase` with `master`;  
+  2d. `merge` with `--edit --no-ff` and name it according to objectives (`feat/fix/chore`) `({work subject}): {work description}`;  
+  2e. then `push`.
 
 Order of items within classes
 -----------------------------
