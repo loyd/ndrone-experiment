@@ -96,7 +96,7 @@ class HMC5883L extends Sensor {
         this.write(new Buffer([0x02, 0x00]), 2);
 
         super.tune(options);
-
+        
         this.samples = this.samples ||  1;
         this.range   = this.range   ||  1.3;
         this.rate    = this.rate    || 15;

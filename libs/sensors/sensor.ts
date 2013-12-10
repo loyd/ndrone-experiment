@@ -42,14 +42,12 @@ class Sensor extends events.EventEmitter {
         if(callback)
             fs.write(this._fd, buffer, 0, length, null, (err, written) => {
                 if(err) return callback(err);
-                    
                 assert(written === length);
-                
+
                 callback(null);
             });
         else {
-            var written = fs.writeSync(this._fd, buffer, 0, length, null);
-            
+            var written = fs.writeSync(this._fd, buffer, 0, length, null);      
             assert(written === length);
         }
     }
@@ -69,12 +67,10 @@ class Sensor extends events.EventEmitter {
         if(callback)
             fs.write(this._fd, buffer, 0, 1, null, (err, written) => {
                 if(err) return callback(err);
-
                 assert(written === 1);
 
                 fs.read(this._fd, buffer, 0, length, null, (err, read, block) => {
                     if(err) return callback(err);
-                    
                     assert(read === length);
                     
                     callback(null, block);
@@ -82,11 +78,9 @@ class Sensor extends events.EventEmitter {
             });
         else {
             var bytes = fs.writeSync(this._fd, buffer, 0, 1, null);
-
             assert(bytes === 1);
 
             bytes = fs.readSync(this._fd, buffer, 0, length, null);
-
             assert(bytes === length);
  
             return buffer;
@@ -102,7 +96,6 @@ class Sensor extends events.EventEmitter {
 
             if(option in options) {
                 var level = options[option];
-
                 if(!(<any>level in entry))
                     throw new Error('Invalid option level for sensor');
 
@@ -117,8 +110,9 @@ class Sensor extends events.EventEmitter {
             this.write(new Buffer([parseInt(register, 10), sending[register]]), 2);
     }
  
+    public measure(type: string, callback?: (err: Error, ...values: number[]) => void, buffer?: NodeBuffer): void;
     public measure(type: string): any;
-    public measure(type: string, callback?: (err: Error, ...values: number[]) => void): void {
+    public measure(type, callback?, buffer?): any {
         throw new Error('Abstract method called');
     }
  
@@ -147,7 +141,7 @@ class Sensor extends events.EventEmitter {
 
         this._periods[type] = period;
         this._streams[type] = <any> setInterval(() =>
-           (<any> this.measure)(type, fire, buffer),
+           this.measure(type, fire, buffer),
         period);
 
         if(callback && listeners > 0) this.on(type, callback);
@@ -173,9 +167,7 @@ class Sensor extends events.EventEmitter {
             throw new Error('Invalid type');
  
         this.removeAllListeners(type);
- 
         clearInterval(<any> this._streams[type]);
-
         this._streams[type] = null;
     }
  
