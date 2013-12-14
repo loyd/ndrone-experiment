@@ -47,7 +47,7 @@ class Sensor extends events.EventEmitter {
                 callback(null);
             });
         else {
-            var written = fs.writeSync(this._fd, buffer, 0, length, null);      
+            var written = fs.writeSync(this._fd, buffer, 0, length, null);
             assert(written === length);
         }
     }
@@ -91,7 +91,7 @@ class Sensor extends events.EventEmitter {
         var datasheet = (<any> this).constructor.DATASHEET,
             sending   = {};
  
-        for (var option in datasheet) if(datasheet.hasOwnProperty(option)) {
+        for(var option in datasheet) if(datasheet.hasOwnProperty(option)) {
             var entry = datasheet[option];
 
             if(option in options) {
@@ -106,11 +106,11 @@ class Sensor extends events.EventEmitter {
             sending[entry.register] |= entry[level];
         }
 
-        for (var register in sending) if(sending.hasOwnProperty(register))
+        for(var register in sending) if(sending.hasOwnProperty(register))
             this.write(new Buffer([parseInt(register, 10), sending[register]]), 2);
     }
  
-    public measure(type: string, callback?: (err: Error, ...values: number[]) => void, buffer?: NodeBuffer): void;
+    public measure(type: string, callback?: (err: Error, ...values: number[]) => void): void;
     public measure(type: string): any;
     public measure(type, callback?, buffer?): any {
         throw new Error('Abstract method called');
@@ -122,7 +122,7 @@ class Sensor extends events.EventEmitter {
 
         var time = Date.now(),
             buffer = new Buffer(8),
-            listeners = this.listeners(type).length,
+            listeners = Sensor.listenerCount(this, type),
             fire;
 
         if(callback && listeners === 0) {
@@ -140,8 +140,8 @@ class Sensor extends events.EventEmitter {
         }
 
         this._periods[type] = period;
-        this._streams[type] = <any> setInterval(() =>
-           this.measure(type, fire, buffer),
+        this._streams[type] = setInterval(() =>
+           (<any> this.measure)(type, fire, buffer),
         period);
 
         if(callback && listeners > 0) this.on(type, callback);
@@ -151,7 +151,7 @@ class Sensor extends events.EventEmitter {
         if(!(type in this._streams))
             throw new Error('Event does not exist');
 
-        if(this.listeners(type).length === 0) {
+        if(Sensor.listenerCount(this, type) === 0) {
             this.streamOff(type);
             this.stream(type, this._periods[type]);
 
@@ -174,7 +174,6 @@ class Sensor extends events.EventEmitter {
     public finalize() {
         for(var type in this._streams) if(this._streams.hasOwnProperty(type)) {
             clearInterval(<any> this._streams[type]);
-
             this._streams[type] = null;
         }
  

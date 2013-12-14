@@ -19,13 +19,13 @@ class HMC5883L extends Sensor {
             register : 0x00,
             default  : 0x10,
 
-             0.75 : 0x00,
-             1.5  : 0x04,
-             3    : 0x08,
-             7.5  : 0x0C,
-            15    : 0x10,
-            30    : 0x14,
-            75    : 0x18
+            0.75 : 0x00,
+            1.5  : 0x04,
+            3    : 0x08,
+            7.5  : 0x0C,
+            15   : 0x10,
+            30   : 0x14,
+            75   : 0x18
         },
 
         range : {
@@ -97,11 +97,11 @@ class HMC5883L extends Sensor {
 
         super.tune(options);
         
-        this.samples = this.samples ||  1;
-        this.range   = this.range   ||  1.3;
+        this.samples = this.samples || 1;
+        this.range   = this.range   || 1.3;
         this.rate    = this.rate    || 15;
 
-        this.gain = 2*this.range/4096+0.0003;
+        this.gain = 2*this.range/4096 + 0.0003;
     }
 
     public finalize() {

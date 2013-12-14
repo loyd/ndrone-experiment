@@ -31,8 +31,8 @@ class ADXL345 extends Sensor {
     };
 
     public range: number;
-    public rate:  number;
-    public gain:  number;
+    public rate: number;
+    public gain: number;
 
     constructor(bus: string, options?: {rate?: number; range?: number}) {
         super(bus, options);
@@ -78,14 +78,14 @@ class ADXL345 extends Sensor {
             }
     }
 
-    tune(options: {rate?: number; range?: number}) {
+    public tune(options: {rate?: number; range?: number}) {
         this.write(new Buffer([0x2D, 0x00]), 2);
         this.write(new Buffer([0x2D, 0x08]), 2);
 
         super.tune(options);
 
         this.rate  = this.rate  || 100;
-        this.range = this.range ||   2;
+        this.range = this.range || 2;
         this.gain  = 2*this.range/1024;
     }
 

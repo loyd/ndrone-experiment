@@ -3,11 +3,11 @@
 import Sensor = require('./sensor');
 
 class BMP085 extends Sensor {
-    public static ADDRESS = 0x77;
+    public static ADDRESS   = 0x77;
     public static DATASHEET = {
         mode: {
-            0 :  5,
-            1 :  8,
+            0 : 5,
+            1 : 8,
             2 : 14,
             3 : 26
         }
@@ -28,59 +28,39 @@ class BMP085 extends Sensor {
         if(!(callback instanceof Function))
             throw new Error('Only asynchronous method supported');
 
-        var
-            s  = this.oss,
-            c  = this.coef;
         buffer = buffer || new Buffer(3);
 
         if(type === 'pressure') {
             buffer[0] = 0xF4;
-            buffer[1] = 0x34 + (s << 6);
-            this.write(buffer, 2, (err) => {
-                setTimeout(() => {
-                    this.read(0xF6, 3, buffer, (err, data) => {
-                        if(err) return callback(err);
+            buffer[1] = 0x34 + (this.oss << 6);
 
-                        var x1, x2, x3, b3, b6, p, b4, b7,
-                            up = ((data[0] << 16) | (data[1] << 8)) >> (8 - s);
-                  
-                        b6 =  this.coef.b5 - 4000;
-                        x1 = (c.b2  * (b6 * b6) >> 12) >> 11;
-                        x2 = (c.ac2 * b6) >> 11;
-                        x3 = x1 + x2;
-                        b3 = (((c.ac1 * 4 + x3) << s) + 2) >> 2;
-                        x1 = (c.ac3 * b6) >> 16;
-                        x2 = (c.b1  * ((b6 * b6) >> 12)) >> 16;
-                        x3 = ((x1 + x2) + 2) >> 2;
-                        b4 = (c.ac4 * (x3 + 32768)) >> 15;
-                        b7 = ((up - b3) * (50000 >> s));
-                        p = b7 < 0x80000000 ? (b7 *  2) / b4
-                                            : (b7 / b4) >> 1;
-                        x1 = p >> 8;
-                        x1*= x1;
-                        x1 = (x1 * 3038) >> 16;
-                        x2 = (-7357 * p) >> 16;
-                        p += (x1 + x2 + 3791) >> 4;
-                  
-                        callback(null, p);
-                    });
+            this.write(buffer, 2, (err) => {
+                if(err) return callback(err);
+
+                setTimeout(() => {
+                    this.read(0xF6, 3, buffer, (err, data) =>
+                        err ? callback(err)
+                            : callback(null, this._calcPressure(data))
+                    );
                 }, this.mode);
             });
         } else if(type === 'temperature') {
             buffer[0] = 0xF4;
             buffer[1] = 0x2E;
+
             this.write(buffer, 2, (err) => {
                 setTimeout(() => {
                     this.read(0xF6, 2, buffer, (err, data) => {
-                        var ut = (data[0] << 8) | data[1],
-                            x1, x2;
+                        if(err) return callback(err);
 
-                        x1 = ((ut - c.ac6) * c.ac5) >> 15;
-                        x2 = (c.mc << 11) / (x1 + c.md);
+                        var coef = this.coef, x1, x2,
+                            ut = (data[0] << 8) | data[1];
 
-                        this.coef.b5 = x1 + x2;
+                        x1 = ((ut - coef.ac6) * coef.ac5) >> 15;
+                        x2 = (coef.mc << 11) / (x1 + coef.md);
 
-                        callback(null, ((this.coef.b5 + 8) >> 4) / 10);
+                        coef.b5 = x1 + x2;
+                        callback(null, ((coef.b5 + 8) >> 4) / 10);
                     });
                 }, this.mode);
             });
@@ -115,6 +95,33 @@ class BMP085 extends Sensor {
         });
 
         this.measure('temperature', (err, t) => {});
+    }
+
+    private _calcPressure(raw: NodeBuffer) {
+        var coef = this.coef,
+            oss  = this.oss;
+
+        var x1, x2, x3, b3, b4, b6, b7, p,
+            up = ((raw[0] << 16) | (raw[1] << 8)) >> (8 - oss);
+  
+        b6 = coef.b5 - 4000;
+        x1 = (coef.b2  * (b6 * b6) >> 12) >> 11;
+        x2 = (coef.ac2 * b6) >> 11;
+        x3 = x1 + x2;
+        b3 = (((coef.ac1 * 4 + x3) << oss) + 2) >> 2;
+        x1 = (coef.ac3 * b6) >> 16;
+        x2 = (coef.b1  * ((b6 * b6) >> 12)) >> 16;
+        x3 = ((x1 + x2) + 2) >> 2;
+        b4 = (coef.ac4 * (x3 + 32768)) >> 15;
+        b7 = ((up - b3) * (50000 >> oss));
+        p  = b7 < 0x80000000 ? (b7 *  2) / b4 : (b7 / b4) >> 1;
+        x1 = p >> 8;
+        x1*= x1;
+        x1 = (x1 * 3038) >> 16;
+        x2 = (-7357 * p) >> 16;
+        p += (x1 + x2 + 3791) >> 4;
+
+        return p;
     }
 }
 

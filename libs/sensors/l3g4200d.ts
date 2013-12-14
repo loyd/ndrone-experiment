@@ -59,17 +59,17 @@ class L3G4200D extends Sensor {
                     (!(y & 0x8000) ? y : (0xffff - y + 1) * -1) * gain,
                     (!(z & 0x8000) ? z : (0xffff - z + 1) * -1) * gain
                 ];
-            } else if(type === 'temperature')
+            }
+        else if(type === 'temperature')
             if(callback)
-                this.read(0x26, 1, buffer, (err: Error, data: NodeBuffer) => {
-                    if(err) return callback(err);
-
-                    callback(null, data[0]);
-                }); else
+                this.read(0x26, 1, buffer, (err, data) =>
+                    err ? callback(err) : callback(null, data[0])
+                );
+            else
                 return this.read(0x26, 1, buffer)[0];
     }
 
-    tune(options: {rate?: number}) {
+    public tune(options: {rate?: number}) {
         this.write(new Buffer([0x20, 0x1F]), 2);
         this.write(new Buffer([0x21, 0x00]), 2);
         this.write(new Buffer([0x22, 0x08]), 2);
