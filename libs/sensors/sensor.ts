@@ -1,11 +1,17 @@
 "use strict";
  
+import fs     = require('fs');
 import assert = require('assert');
 import events = require('events');
-import fs = require('fs');
+import ffi    = require('ffi');
+import ref    = require('ref');
+import errno  = require('../errno');
 
-import ioctl = require('../ffi/ioctl');
- 
+var T = ref.types;
+var lib = new ffi.Library(null, {
+    ioctl : [T.int, [T.int, T.int, T.int]]
+});
+
 var I2C_SLAVE = 0x703;
 
 class Sensor extends events.EventEmitter {
@@ -26,7 +32,9 @@ class Sensor extends events.EventEmitter {
             throw new Error('Invalid parameters for setup');
  
         var fd = this._fd = fs.openSync(bus, 'r+');
-        ioctl(fd, I2C_SLAVE, address);
+
+        if(lib.ioctl(fd, I2C_SLAVE, address) < 0)
+            throw new errno.ErrnoError(ffi.errno(), 'Failed to control I2C subdevice');
  
         if(options) this.tune(options);
     }
@@ -122,17 +130,18 @@ class Sensor extends events.EventEmitter {
 
         var time = Date.now(),
             buffer = new Buffer(8),
-            listeners = Sensor.listenerCount(this, type);
+            listeners = Sensor.listenerCount(this, type),
+            fire: Function;
 
         if(callback && listeners === 0) {
-            var fire = (/* ...args */) => {
+            fire = (/* ...args */) => {
                 var dtime = -(time - (time = Date.now()));
                 callback.apply(this, [].slice.call(arguments).concat(dtime));
             };
             this._callbacks[type] = callback;
         } else {
             var argsBase = [type];
-            var fire = (/* ...args */) => {
+            fire = (/* ...args */) => {
                 var dtime = -(time - (time = Date.now()));
                 this.emit.apply(this, argsBase.concat<any>([].slice.call(arguments), dtime));
             };
