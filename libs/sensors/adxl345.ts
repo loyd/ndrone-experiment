@@ -40,7 +40,7 @@ class ADXL345 extends Sensor {
 
     public measure(type: string, callback?: (err: Error, ...values: number[]) => void): any;
     public measure(type: 'acceleration'): number[];
-    public measure(type, callback?, buffer?): any {
+    public measure(type: string, callback?: any, buffer?: any): any {
         var gain = this.gain;
 
         if(!(callback instanceof Function)) {

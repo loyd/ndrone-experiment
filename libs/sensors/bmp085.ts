@@ -24,7 +24,7 @@ class BMP085 extends Sensor {
     public measure(type: string, callback?: (err: Error, value: number) => void): any;
     public measure(type: 'pressure'): number;
     public measure(type: 'temperature'): number;
-    public measure(type, callback?, buffer?): any {
+    public measure(type: string, callback?: any, buffer?: any): any {
         if(!(callback instanceof Function))
             throw new Error('Only asynchronous method supported');
 
@@ -53,11 +53,10 @@ class BMP085 extends Sensor {
                     this.read(0xF6, 2, buffer, (err, data) => {
                         if(err) return callback(err);
 
-                        var coef = this.coef, x1, x2,
-                            ut = (data[0] << 8) | data[1];
-
-                        x1 = ((ut - coef.ac6) * coef.ac5) >> 15;
-                        x2 = (coef.mc << 11) / (x1 + coef.md);
+                        var coef = this.coef,
+                            ut = (data[0] << 8) | data[1],
+                            x1 = ((ut - coef.ac6) * coef.ac5) >> 15,
+                            x2 = (coef.mc << 11) / (x1 + coef.md);
 
                         coef.b5 = x1 + x2;
                         callback(null, ((coef.b5 + 8) >> 4) / 10);
@@ -101,7 +100,8 @@ class BMP085 extends Sensor {
         var coef = this.coef,
             oss  = this.oss;
 
-        var x1, x2, x3, b3, b4, b6, b7, p,
+        var x1: number, x2: number, x3: number, p: number,
+            b3: number, b4: number, b6: number, b7: number,
             up = ((raw[0] << 16) | (raw[1] << 8)) >> (8 - oss);
   
         b6 = coef.b5 - 4000;

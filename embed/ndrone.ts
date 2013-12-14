@@ -97,7 +97,7 @@ if(cluster.isMaster) {
     require('./' + role + '/' + role);
 }
 
-function dump(err) {
+function dump(err: any) {
     console.error('%s (%d)', process.title, process.pid);
     console.error('Uptime: %s (OS), %s (worker)',
         new Date(     os.uptime() * 1000).toISOString().slice(11, 19),

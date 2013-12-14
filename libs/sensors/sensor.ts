@@ -9,7 +9,7 @@ import ioctl = require('../ffi/ioctl');
 var I2C_SLAVE = 0x703;
 
 class Sensor extends events.EventEmitter {
-    public static DATASHEET;
+    public static DATASHEET: any;
     public static ADDRESS: number;
  
     private _streams:   {[key: string]: NodeTimer} = {};
@@ -31,9 +31,9 @@ class Sensor extends events.EventEmitter {
         if(options) this.tune(options);
     }
 
-    public write(buffer: NodeBuffer, callback?: (err: Error) => void);
-    public write(buffer: NodeBuffer, length: number, callback?: (err: Error) => void);
-    public write(buffer: NodeBuffer, length?, callback?) {
+    public write(buffer: NodeBuffer, callback?: (err: Error) => void): void;
+    public write(buffer: NodeBuffer, length: number, callback?: (err: Error) => void): void;
+    public write(buffer: NodeBuffer, length?: any, callback?: any) {
         if(typeof length !== 'number') {
             callback = length;
             length   = buffer.length;
@@ -56,7 +56,7 @@ class Sensor extends events.EventEmitter {
                 callback?: (err: Error, data: NodeBuffer) => void): NodeBuffer;
     public read(register: number, length: number, buffer: NodeBuffer,
                 callback?: (err: Error, data: NodeBuffer) => void): NodeBuffer;
-    public read(register: number, length: number, buffer?, callback?): NodeBuffer {
+    public read(register: number, length: number, buffer?: any, callback?: any): NodeBuffer {
         if(!(buffer instanceof Buffer)) {
             callback = buffer;
             buffer   = new Buffer(length);
@@ -112,7 +112,7 @@ class Sensor extends events.EventEmitter {
  
     public measure(type: string, callback?: (err: Error, ...values: number[]) => void): void;
     public measure(type: string): any;
-    public measure(type, callback?, buffer?): any {
+    public measure(type: string, callback?: Function, buffer?: NodeBuffer): any {
         throw new Error('Abstract method called');
     }
  
@@ -122,18 +122,17 @@ class Sensor extends events.EventEmitter {
 
         var time = Date.now(),
             buffer = new Buffer(8),
-            listeners = Sensor.listenerCount(this, type),
-            fire;
+            listeners = Sensor.listenerCount(this, type);
 
         if(callback && listeners === 0) {
-            fire = (/* ...args */) => {
+            var fire = (/* ...args */) => {
                 var dtime = -(time - (time = Date.now()));
                 callback.apply(this, [].slice.call(arguments).concat(dtime));
             };
             this._callbacks[type] = callback;
         } else {
             var argsBase = [type];
-            fire = (/* ...args */) => {
+            var fire = (/* ...args */) => {
                 var dtime = -(time - (time = Date.now()));
                 this.emit.apply(this, argsBase.concat<any>([].slice.call(arguments), dtime));
             };

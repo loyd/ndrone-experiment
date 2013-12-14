@@ -5,7 +5,7 @@ import ArrayType = require('ref-array');
 import ref = require('ref');
 
 var T = ref.types;
-var $ = (type) => ref.refType(type);
+var $ = (type: any) => ref.refType(type);
 
 var glvoid   = T.void;
 var char     = T.char;

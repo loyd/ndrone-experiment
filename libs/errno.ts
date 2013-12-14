@@ -3,7 +3,7 @@
 export var descriptions: string[] = [];
 
 var index = 0;
-function def(desc): number {
+function def(desc: any): number {
     var val = index;
     if(typeof desc === 'number') {
         val = desc;

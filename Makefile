@@ -1,6 +1,6 @@
 #### Compiler
 TSC = ./node_modules/.bin/tsc
-TSFLAGS = -m commonjs -t ES5
+TSFLAGS = -m commonjs -t ES5 --noImplicitAny
 
 #### Linter
 TSLINT = ./node_modules/.bin/tslint
