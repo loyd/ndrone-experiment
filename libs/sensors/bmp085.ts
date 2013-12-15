@@ -5,7 +5,13 @@ import Sensor = require('./sensor');
 class BMP085 extends Sensor {
     public static ADDRESS   = 0x77;
     public static DATASHEET = {
-        mode: {
+        oss : {
+            default : 0
+        },
+
+        time : {
+            default : 5,
+
             0 : 5,
             1 : 8,
             2 : 14,
@@ -13,63 +19,70 @@ class BMP085 extends Sensor {
         }
     };
 
-    public mode: number;
     public coef: any;
+
+    public time: number;
     public oss:  number;
 
-    constructor(bus: string, options?: {mode?: number}) {
+    constructor(bus: string, options?: {oss?: number}) {
         super(bus, options);
     }
 
-    public measure(type: string, callback?: (err: Error, value: number) => void): any;
-    public measure(type: 'pressure'): number;
-    public measure(type: 'temperature'): number;
+    public measure(type: string, callback?: (err: Error, ...values: number[]) => void): any;
+    public measure(type: 'condition'): number;
     public measure(type: string, callback?: any, buffer?: any): any {
         if(!(callback instanceof Function))
             throw new Error('Only asynchronous method supported');
 
         buffer = buffer || new Buffer(3);
 
-        if(type === 'pressure') {
-            buffer[0] = 0xF4;
-            buffer[1] = 0x34 + (this.oss << 6);
+        var time = this.time;
 
-            this.write(buffer, 2, (err) => {
-                if(err) return callback(err);
-
-                setTimeout(() => {
-                    this.read(0xF6, 3, buffer, (err, data) =>
-                        err ? callback(err)
-                            : callback(null, this._calcPressure(data))
-                    );
-                }, this.mode);
-            });
-        } else if(type === 'temperature') {
+        if(type === 'condition') {
             buffer[0] = 0xF4;
             buffer[1] = 0x2E;
 
             this.write(buffer, 2, (err) => {
                 setTimeout(() => {
-                    this.read(0xF6, 2, buffer, (err, data) => {
+                    this.read(0xF6, 2, buffer, (err, tdata) => {
                         if(err) return callback(err);
 
                         var coef = this.coef,
-                            ut = (data[0] << 8) | data[1],
+                            ut = (tdata[0] << 8) | tdata[1],
                             x1 = ((ut - coef.ac6) * coef.ac5) >> 15,
                             x2 = (coef.mc << 11) / (x1 + coef.md);
 
                         coef.b5 = x1 + x2;
-                        callback(null, ((coef.b5 + 8) >> 4) / 10);
+
+                        var t = ((coef.b5 + 8) >> 4) / 10;
+
+                        buffer[0] = 0xF4;
+                        buffer[1] = 0x34 + (this.oss << 6);
+
+                        this.write(buffer, 2, (err) => {
+                            if(err) return callback(err);
+
+                            setTimeout(() => {
+                                this.read(0xF6, 3, buffer, (err, pdata) =>
+                                    err ? callback(err)
+                                        : callback(null,
+                                                   t,
+                                                   this._calcPressure(pdata))
+                                );
+                            }, time);
+                        });
                     });
-                }, this.mode);
+                }, time);
             });
         }
     }
 
-    public tune(options: {mode?: number}) {
-        this.mode = BMP085.DATASHEET.mode[this.oss];
+    public tune(options: {oss?: number}) {
+        var datasheet = BMP085.DATASHEET;
+
+        this.oss  = options.oss || datasheet.oss.default;
+        this.time = datasheet.time[this.oss] || datasheet.time.default;
         this.coef = {};
-        this.oss  = options['oss'] || 0;
         var bytes = new Buffer(2);
 
         [   ['ac1', 0xAA],
@@ -92,8 +105,6 @@ class BMP085 extends Sensor {
             bytes = this.read(data[1], 2, bytes);
             this.coef[data[0]] = bytes.readUInt16BE(0);
         });
-
-        this.measure('temperature', (err, t) => {});
     }
 
     private _calcPressure(raw: NodeBuffer) {
@@ -102,7 +113,7 @@ class BMP085 extends Sensor {
 
         var x1: number, x2: number, x3: number, p: number,
             b3: number, b4: number, b6: number, b7: number,
-            up = ((raw[0] << 16) | (raw[1] << 8)) >> (8 - oss);
+            up = ((raw[0] << 16) | (raw[1] << 8) | raw[2]) >> (8 - oss);
   
         b6 = coef.b5 - 4000;
         x1 = (coef.b2  * (b6 * b6) >> 12) >> 11;

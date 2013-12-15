@@ -7,7 +7,7 @@ class HMC5883L extends Sensor {
     public static DATASHEET = {
         samples : {
             register : 0x00,
-            default  : 0x10,
+            default  : 1,
 
             1 : 0x00,
             2 : 0x20,
@@ -17,7 +17,7 @@ class HMC5883L extends Sensor {
 
         rate : {
             register : 0x00,
-            default  : 0x10,
+            default  : 15,
 
             0.75 : 0x00,
             1.5  : 0x04,
@@ -30,7 +30,7 @@ class HMC5883L extends Sensor {
 
         range : {
             register : 0x01,
-            default  : 0x20,
+            default  : 1.3,
 
             0.88 : 0x00,
             1.3  : 0x20,
@@ -93,13 +93,15 @@ class HMC5883L extends Sensor {
     }
 
     tune(options: {samples?: number; range?: number; rate?: number}) {
+        var datasheet = HMC5883L.DATASHEET;
+
         this.write(new Buffer([0x02, 0x00]), 2);
 
         super.tune(options);
         
-        this.samples = this.samples || 1;
-        this.range   = this.range   || 1.3;
-        this.rate    = this.rate    || 15;
+        this.samples = this.samples || datasheet.samples.default;
+        this.range   = this.range   || datasheet.range  .default;
+        this.rate    = this.rate    || datasheet.rate   .default;
 
         this.gain = 2*this.range/4096 + 0.0003;
     }

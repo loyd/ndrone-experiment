@@ -7,6 +7,7 @@ class ADXL345 extends Sensor {
     public static DATASHEET = {
         rate : {
             register : 0x2C,
+            default  : 100,
 
             3    : 0x05,
             6    : 0x06,
@@ -22,6 +23,7 @@ class ADXL345 extends Sensor {
 
         range : {
             register : 0x31,
+            default  : 2,
 
             2  : 0x00,
             4  : 0x01,
@@ -79,13 +81,15 @@ class ADXL345 extends Sensor {
     }
 
     public tune(options: {rate?: number; range?: number}) {
+        var datasheet = ADXL345.DATASHEET;
+
         this.write(new Buffer([0x2D, 0x00]), 2);
         this.write(new Buffer([0x2D, 0x08]), 2);
 
         super.tune(options);
 
-        this.rate  = this.rate  || 100;
-        this.range = this.range || 2;
+        this.rate  = this.rate  || datasheet.rate .default;
+        this.range = this.range || datasheet.range.default;
         this.gain  = 2*this.range/1024;
     }
 

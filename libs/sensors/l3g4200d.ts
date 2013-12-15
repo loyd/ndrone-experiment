@@ -7,6 +7,7 @@ class L3G4200D extends Sensor {
     public static DATASHEET = {
         rate : {
             register : 0x23,
+            default  : 250,
 
             250  : 0x00,
             500  : 0x10,
@@ -70,6 +71,8 @@ class L3G4200D extends Sensor {
     }
 
     public tune(options: {rate?: number}) {
+        var datasheet = L3G4200D.DATASHEET;
+
         this.write(new Buffer([0x20, 0x1F]), 2);
         this.write(new Buffer([0x21, 0x00]), 2);
         this.write(new Buffer([0x22, 0x08]), 2);
@@ -78,7 +81,7 @@ class L3G4200D extends Sensor {
 
         this.write(new Buffer([0x24, 0x00]), 2);
 
-        this.rate = this.rate || 250;
+        this.rate = this.rate || datasheet.rate.default;
         this.gain = 2*this.rate/65536;
     }
 

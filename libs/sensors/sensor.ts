@@ -23,7 +23,7 @@ class Sensor extends events.EventEmitter {
     private _callbacks: {[key: string]: Function}  = {};
     private _fd: number;
  
-    constructor(bus: string, options?: any) {
+    constructor(bus: string, options: any = {}) {
         super();
  
         var address = (<any> this).constructor.ADDRESS;
@@ -36,7 +36,7 @@ class Sensor extends events.EventEmitter {
         if(lib.ioctl(fd, I2C_SLAVE, address) < 0)
             throw new errno.ErrnoError(ffi.errno(), 'Failed to control I2C subdevice');
  
-        if(options) this.tune(options);
+        this.tune(options);
     }
 
     public write(buffer: NodeBuffer, callback?: (err: Error) => void): void;
@@ -110,12 +110,15 @@ class Sensor extends events.EventEmitter {
                 this[option] = level;
             }
 
-            sending[entry.register]  = sending[entry.register] || entry.default || 0x00;
+            sending[entry.register]  = sending[entry.register] ||
+                                       entry[entry.default]    ||
+                                       0x00;
             sending[entry.register] |= entry[level];
         }
 
-        for(var register in sending) if(sending.hasOwnProperty(register))
+        for(var register in sending) if(sending.hasOwnProperty(register)) {
             this.write(new Buffer([parseInt(register, 10), sending[register]]), 2);
+        }
     }
  
     public measure(type: string, callback?: (err: Error, ...values: number[]) => void): void;
@@ -148,7 +151,7 @@ class Sensor extends events.EventEmitter {
         }
 
         this._periods[type] = period;
-        this._streams[type] = setInterval(() =>
+        this._streams[type] = <any> setInterval(() =>
            (<any> this.measure)(type, fire, buffer),
         period);
 
