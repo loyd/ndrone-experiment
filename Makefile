@@ -44,6 +44,10 @@ build/client: $(shell find client shared libs -type f) config.ts
 		cp $(file) $(_out)/$(file)$(\n))
 
 #### Tasks
+deploy:
+	scp build/* "$(RTARGET):$(RPATH)/ndrone/ndrone.tar"
+	ssh $(RTARGET) "cd ndrone && tar -xvf ndrone.tar && rm ndrone.tar"
+
 package: _out = /tmp/ndrone
 package: build
 	$(eval _PKGID = $(shell echo "obase=16; (`date +%s`-1384201244)/60" | bc))
