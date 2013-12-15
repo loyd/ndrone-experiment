@@ -51,7 +51,7 @@ if(cluster.isMaster) {
             if(flight.suicide) return;
 
             flight = cluster.fork({ROLE : 'flight'});
-            flight.on('error', (err) => {
+            flight.on('error', (err: Error) => {
                 dump(err);
                 flight = mock;
                 run.flight();
@@ -61,14 +61,14 @@ if(cluster.isMaster) {
                 flight = mock;
                 run.flight();
             });
-            flight.on('message', (data) => fpv.send(data));
+            flight.on('message', (data: string) => fpv.send(data));
         }),
 
         fpv : throttle(() => {
             if(fpv.suicide) return;
 
             fpv = cluster.fork({ROLE : 'fpv'});
-            fpv.on('error', (err) => {
+            fpv.on('error', (err: Error) => {
                 dump(err);
                 fpv = mock;
                 run.fpv();
@@ -78,7 +78,7 @@ if(cluster.isMaster) {
                 fpv = mock;
                 run.fpv();
             });
-            fpv.on('message', (data) => flight.send(data));
+            fpv.on('message', (data: string) => flight.send(data));
         })
     };
 
@@ -89,7 +89,7 @@ if(cluster.isMaster) {
     de&&mand(~['flight', 'fpv'].indexOf(role));
     process.title = 'ndrone: ' + role;
 
-    process.on('uncaughtException', (err) => {
+    process.on('uncaughtException', (err: Error) => {
         dump(err);
         process.exit(1);
     });
