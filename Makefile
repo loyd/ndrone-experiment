@@ -35,10 +35,9 @@ build/embed: $(shell find embed shared libs -name '*.ts') config.ts
 	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(_out)
 
 build/client: $(shell find client shared libs -type f) config.ts
-	mkdir -p $(addsuffix $(dir $(CLIENT)), /tmp/ndrone/_ $(_out)/)
-	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_$(dir $(CLIENT))
-	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_$(CLIENT:.ts=.js) -o $(_out)/$(CLIENT:.ts=.js)
-	rm -rf /tmp/ndrone/_$(dir $(CLIENT))
+	mkdir -p $(_out)/client
+	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/
+	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/$(CLIENT:.ts=.js) -o $(_out)/client/bundle.js
 	$(foreach file, $(shell find client -type f ! -name '*.ts'), \
 		mkdir -p $(_out)/$(dir $(file))$(\n) \
 		cp $(file) $(_out)/$(file)$(\n))
