@@ -31,33 +31,50 @@ RPATH   ?= /home
 ################################################################################
 .DEFAULT_GOAL = package
 
+ifneq (,$(filter $(MAKECMDGOALS),package deploy))
+	out = /tmp/ndrone
+else
+	out = build
+endif
+
 #### Targets
-build: build/embed build/client
+$(out): $(out)/embed $(out)/client
 
-build/embed: $(shell find embed shared libs -name '*.ts') config.ts
-	mkdir -p $(_out)/embed
-	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(_out)
+$(out)/embed: $(shell find embed shared libs -name '*.ts') config.ts
+	rm -rf $@ && mkdir -p $@
+	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(out)
 
-build/client: $(shell find client shared libs -type f) config.ts
-	mkdir -p $(_out)/client
+$(out)/client: $(out)/client/bundle.js \
+               $(addprefix $(out)/, $(shell find client -type f ! -name '*.ts'))
+
+$(out)/client/bundle.js: $(shell find client shared libs -name '*.ts') config.ts
+	mkdir -p $(dir $@) && touch $(dir $@)
 	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/
-	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/$(CLIENT:.ts=.js) -o $(_out)/client/bundle.js
-	$(foreach file, $(shell find client -type f ! -name '*.ts'), \
-		mkdir -p $(_out)/$(dir $(file))$(\n) \
-		cp $(file) $(_out)/$(file)$(\n))
+	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/$(CLIENT:.ts=.js) -o $@
+
+define exttarget # (ext)
+$(out)/client/%$(1): client/%$(1)
+	mkdir -p $$(dir $$@) && cp $$< $$@
+endef
+
+$(foreach ext, $(shell find client -type f ! -name '*.ts' | egrep -o '\..*$$'), \
+	$(eval $(call exttarget,$(ext))))
+
+$(out)/package.json: package.json
+	cp $< $@
 
 #### Tasks
+.PHONY: setup setup\:nm setup\:tsd update update\:nm update\:tsd lint tree labels clean
+
 deploy: package
 	scp $(shell ls build | grep ndrone- | tail -n 1) '$(RTARGET):$(RPATH)/ndrone.tar'
 	ssh $(RTARGET) 'cd $(RPATH) && tar -xvf ndrone.tar && rm ndrone.tar'
 
-package: _out = /tmp/ndrone
-package: build
-	$(eval _PKGID = $(shell echo "obase=16; (`date +%s`-1384201244)/60" | bc))
-	cp package.json $(_out)
-	npm shrinkwrap && mv npm-shrinkwrap.json $(_out)
+package: $(out) $(out)/package.json
+	npm shrinkwrap 2>&1 && mv npm-shrinkwrap.json $(out)
 	mkdir -p build
-	cd $(_out) && tar -cf "$(CURDIR)/build/ndrone-$(_PKGID).tar" *
+	$(eval _PKGID = $(shell echo "obase=16; (`date +%s`-1384201244)/60" | bc))
+	cd $(out) && tar -cf "$(CURDIR)/build/ndrone-$(_PKGID).tar" *
 
 lint:
 	$(foreach file, $(shell find libs embed client shared -name '*.ts'), \
@@ -91,8 +108,7 @@ clean:
 	rm -rf build
 	rm -rf /tmp/ndrone
 
-#### Private
-_out = build
+#### Misc
 define \n
 
 
