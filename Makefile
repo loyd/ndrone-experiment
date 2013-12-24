@@ -24,6 +24,10 @@ EMBED = embed/ndrone.ts \
 
 CLIENT = client/index.ts
 
+#### Remote
+RTARGET ?= raspi@ndrone
+RPATH   ?= /home
+
 ################################################################################
 .DEFAULT_GOAL = package
 
@@ -43,9 +47,9 @@ build/client: $(shell find client shared libs -type f) config.ts
 		cp $(file) $(_out)/$(file)$(\n))
 
 #### Tasks
-deploy:
-	scp build/* "$(RTARGET):$(RPATH)/ndrone/ndrone.tar"
-	ssh $(RTARGET) "cd ndrone && tar -xvf ndrone.tar && rm ndrone.tar"
+deploy: package
+	scp $(shell ls build | grep ndrone- | tail -n 1) '$(RTARGET):$(RPATH)/ndrone.tar'
+	ssh $(RTARGET) 'cd $(RPATH) && tar -xvf ndrone.tar && rm ndrone.tar'
 
 package: _out = /tmp/ndrone
 package: build
