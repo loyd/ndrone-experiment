@@ -49,8 +49,9 @@ $(out)/client: $(out)/client/bundle.js \
 
 $(out)/client/bundle.js: $(shell find client shared libs -name '*.ts') config.ts
 	mkdir -p $(dir $@) && touch $(dir $@)
-	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/
-	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/$(CLIENT:.ts=.js) -o $@
+	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_client/
+	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_$(CLIENT:.ts=.js) -o $@
+	rm -rf /tmp/ndrone/_client/
 
 define exttarget # (ext)
 $(out)/client/%$(1): client/%$(1)
