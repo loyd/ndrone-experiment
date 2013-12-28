@@ -68,7 +68,7 @@ $(out)/package.json: package.json
 .PHONY: setup setup\:nm setup\:tsd update update\:nm update\:tsd lint tree labels clean
 
 deploy: package
-	scp $(shell ls build | grep ndrone- | tail -n 1) '$(RTARGET):$(RPATH)/ndrone.tar'
+	scp $(shell find build -name 'ndrone-*.tar' | tail -n 1) '$(RTARGET):$(RPATH)/ndrone.tar'
 	ssh $(RTARGET) 'cd $(RPATH) && tar -xvf ndrone.tar && rm ndrone.tar'
 
 package: $(out) $(out)/package.json
