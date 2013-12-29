@@ -26,7 +26,7 @@ CLIENT = client/index.ts
 
 #### Remote
 RTARGET ?= raspi@ndrone
-RPATH   ?= /home
+RPATH   ?= /home/ndrone
 
 ################################################################################
 .DEFAULT_GOAL = package
@@ -49,9 +49,9 @@ $(out)/client: $(out)/client/bundle.js \
 
 $(out)/client/bundle.js: $(shell find client shared libs -name '*.ts') config.ts
 	mkdir -p $(dir $@) && touch $(dir $@)
-	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_client/
-	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_$(CLIENT:.ts=.js) -o $@
-	rm -rf /tmp/ndrone/_client/
+	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_brfy/
+	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_brfy/$(CLIENT:.ts=.js) -o $@
+	rm -rf /tmp/ndrone/_brfy/
 
 define exttarget # (ext)
 $(out)/client/%$(1): client/%$(1)
