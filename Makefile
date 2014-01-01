@@ -50,6 +50,7 @@ $(out)/client: $(out)/client/bundle.js \
 $(out)/client/bundle.js: $(shell find client shared libs -name '*.ts') config.ts
 	mkdir -p $(dir $@) && touch $(dir $@)
 	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_brfy/
+	ln -s $(CURDIR)/node_modules/ /tmp/ndrone/_brfy/
 	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_brfy/$(CLIENT:.ts=.js) -o $@
 	rm -rf /tmp/ndrone/_brfy/
 
