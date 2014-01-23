@@ -15,14 +15,14 @@ class CompassWidget extends Widget {
 
     public update(data: {yaw: number}) {
         var cx: CanvasRenderingContext2D = this.context,
-            bw: number = this.textures[0].width,
-            bh: number = this.textures[0].height,
-            cw: number = this.textures[1].width,
-            ch: number = this.textures[1].height,
+            bw = this.textures[0].width,
+            bh = this.textures[0].height,
+            cw = this.textures[1].width,
+            ch = this.textures[1].height,
             
-            a:   number = (ch-bh)/2,
-            b:   number = data.yaw/Math.PI,
-            qbw: number = bw/4;
+            a   = (ch-bh)/2,
+            b   = data.yaw/Math.PI,
+            qbw = bw/4;
 
         cx.clearRect(0, 0, bw, ch);
         cx.drawImage(this.textures[0],   qbw*(b + 1), a, bw, bh);

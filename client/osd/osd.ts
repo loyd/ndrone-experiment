@@ -41,9 +41,7 @@ class OSD {
         this.load   = new LoadWidget(rate);
         this.temp   = new TempWidget(rate);
 
-        setInterval(() =>
-            //#TODO: get real data
-            this.update([1, 0, 0, 0], [0, 0], [0, 0, 0], 50, 50), rate);
+        this.update([1, 0, 0, 0], [0, 0], [0, 0, 0], 50, 50);
     }
 
     public update(quaternion: number[], temp: number[], load: number[], mem: number, cpu: number) {
@@ -51,9 +49,10 @@ class OSD {
 
         this.compass.update({yaw   : angles[0]});
         this.horizon.update({pitch : angles[1], roll : angles[2]});
-        this.cpumem .update({cpu : cpu, mem : mem});
-        this.load   .update({one : load[0], five : load[1], fifteen : load[2]});
-        this.temp   .update({outside : temp[0], inside : temp[1]});
+
+        this.cpumem.update({cpu : cpu, mem : mem});
+        this.load  .update({one : load[0], five : load[1], fifteen : load[2]});
+        this.temp  .update({outside : temp[0], inside : temp[1]});
     }
 }
 

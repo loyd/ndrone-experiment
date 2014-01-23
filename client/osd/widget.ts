@@ -11,7 +11,7 @@ class Widget {
         this.canvas = document.createElement('canvas');
         this.canvas.className = 'widget';
 
-        this.context = this.canvas.getContext('2d')
+        this.context = this.canvas.getContext('2d');
 
         if(options)
             options.forEach((entry, i) => {

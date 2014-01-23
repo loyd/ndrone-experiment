@@ -1,25 +1,25 @@
 "use strict";
 
-import Widget = require('./widget');
-var Smoothie = require('smoothie');
+import Widget   = require('./widget');
+import Smoothie = require('smoothie');
 
 class CPUMEMWidget extends Widget {
-    private cpu: any;
-    private mem: any;
+    private cpu: Smoothie.TimeSeries;
+    private mem: Smoothie.TimeSeries;
 
     constructor(rate: number) {
         super(rate);
 
-        this.canvas.width  = innerWidth/8;
-        this.canvas.height = innerHeight/8;
+        this.canvas.width  = innerWidth  / 8;
+        this.canvas.height = innerHeight / 8;
 
-        this.canvas.style.left = 7/16*innerWidth  + 'px';
-        this.canvas.style.top  = 7/8 *innerHeight + 'px';
+        this.canvas.style.left = 7/16 * innerWidth  + 'px';
+        this.canvas.style.top  = 7/8  * innerHeight + 'px';
 
         this.mem = new Smoothie.TimeSeries();
         this.cpu = new Smoothie.TimeSeries();
 
-        var chart: any = new Smoothie.SmoothieChart({
+        var chart = new Smoothie.SmoothieChart({
             grid : {
                 strokeStyle : '#404040'
             },
@@ -31,15 +31,13 @@ class CPUMEMWidget extends Widget {
         });
 
         chart.addTimeSeries(this.mem, {
-            strokeStyle : '#0000FF',
-            lineWidth   : 2,
-            fillStyle   : 'rgba(0, 0, 64, 0.25)'
+            strokeStyle : 'rgba(0, 0, 255, 1)',
+            fillStyle   : 'rgba(0, 0,  64, 0.25)'
         });
 
         chart.addTimeSeries(this.cpu, {
-            strokeStyle : '#00FF00',
-            lineWidth   : 2,
-            fillStyle   : 'rgba(0, 64, 0, 0.25)'
+            strokeStyle : 'rgba(0, 255, 0, 1)',
+            fillStyle   : 'rgba(0,  64, 0, 0.25)'
         });
 
         chart.streamTo(this.canvas, rate);
