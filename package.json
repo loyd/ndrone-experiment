@@ -19,8 +19,7 @@
     },
 
     "devDependencies" : {
-        "typescript" : ">=0.9",
-        "browserify" : ">=2.36",
+        "typescript" : "0.9",
         "tslint" : ">=0.3"
     },
 
@@ -30,6 +29,6 @@
         "ref-array"  : "*",
         "ref-struct" : "*",
         "ref-union"  : "*",
-        "websocket" : "~1"
+        "ws" : "~0.4"
     }
 }

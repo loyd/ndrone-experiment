@@ -1,3 +1,6 @@
+#### Common
+OUT ?= /tmp/ndrone
+
 #### Compiler
 TSC = ./node_modules/.bin/tsc
 TSFLAGS = -m commonjs -t ES5 --noImplicitAny
@@ -6,19 +9,15 @@ TSFLAGS = -m commonjs -t ES5 --noImplicitAny
 TSLINT = ./node_modules/.bin/tslint
 TSLINTFLAGS =
 
-#### Browser adapter
-BRFY = ./node_modules/.bin/browserify
-BRFYFLAGS = --dg
-
 #### Definitions
 TSDREPO = http://github.com/borisyankov/DefinitelyTyped/raw/master
-TSDDIR  = definitions
+TSDDIR = definitions
 
 TSDLIST = node \
           node-ffi
 
 #### Parts
-EMBED = embed/ndrone.ts \
+EMBED = embed/main.ts \
         embed/flight/flight.ts \
         embed/fpv/fpv.ts
 
@@ -26,57 +25,50 @@ CLIENT = client/index.ts
 
 #### Remote
 RTARGET ?= raspi@ndrone
-RPATH   ?= /home/ndrone
+RPATH ?= /home/ndrone
 
 ################################################################################
-.DEFAULT_GOAL = package
-
-ifneq (,$(filter $(MAKECMDGOALS),package deploy))
-	out = /tmp/ndrone
-else
-	out = build
-endif
+.DEFAULT_GOAL = deploy
 
 #### Targets
-$(out): $(out)/embed $(out)/client
+$(OUT)/embed: $(shell find embed shared libs -name '*.ts') config.ts
+	mkdir -p $@/
+	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(OUT)/
 
-$(out)/embed: $(shell find embed shared libs -name '*.ts') config.ts
-	rm -rf $@ && mkdir -p $@
-	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(out)
+$(OUT)/client: $(shell find client shared libs -name '*.ts') config.ts \
+               $(addprefix $(OUT)/, $(shell find client -type f ! -name '*.ts'))
+	mkdir -p $@/
+	$(TSC) $(TSFLAGS) $(CLIENT) --outDir $(OUT)/
+	ln -fs $(CURDIR)/node_modules $(OUT)/node_modules
 
-$(out)/client: $(out)/client/bundle.js \
-               $(addprefix $(out)/, $(shell find client -type f ! -name '*.ts'))
-
-$(out)/client/bundle.js: $(shell find client shared libs -name '*.ts') config.ts
-	mkdir -p $(dir $@) && touch $(dir $@)
-	$(TSC) $(TSFLAGS) $(CLIENT) --outDir /tmp/ndrone/_brfy/
-	ln -s $(CURDIR)/node_modules/ /tmp/ndrone/_brfy/
-	$(BRFY) $(BRFYFLAGS) /tmp/ndrone/_brfy/$(CLIENT:.ts=.js) -o $@
-	rm -rf /tmp/ndrone/_brfy/
-
-define exttarget # (ext)
-$(out)/client/%$(1): client/%$(1)
+# Make target to copy non-ts files
+define exttarget
+$(OUT)/client/%$(1): client/%$(1)
 	mkdir -p $$(dir $$@) && cp $$< $$@
 endef
 
 $(foreach ext, $(shell find client -type f ! -name '*.ts' | egrep -o '\..*$$'), \
 	$(eval $(call exttarget,$(ext))))
 
-$(out)/package.json: package.json
+$(OUT)/package.json: package.json
 	cp $< $@
 
+$(OUT)/npm-shrinkwrap.json: package.json
+	npm shrinkwrap 2>&1 | grep -v 'Excluding' && mv npm-shrinkwrap.json $(OUT)
+
 #### Tasks
-.PHONY: setup setup\:nm setup\:tsd update update\:nm update\:tsd lint tree labels clean
+.PHONY: build deploy \
+        setup  setup\:nm  setup\:tsd \
+        update update\:nm update\:tsd \
+        lint tree labels clean
 
-deploy: package
-	scp $(shell find build -name 'ndrone-*.tar' | tail -n 1) '$(RTARGET):$(RPATH)/ndrone.tar'
-	ssh $(RTARGET) 'cd $(RPATH) && tar -xvf ndrone.tar && rm ndrone.tar'
+build: $(OUT)/embed $(OUT)/client
 
-package: $(out) $(out)/package.json
-	npm shrinkwrap 2>&1 && mv npm-shrinkwrap.json $(out)
-	mkdir -p build
-	$(eval _PKGID = $(shell echo "obase=16; (`date +%s`-1384201244)/60" | bc))
-	cd $(out) && tar -cf "$(CURDIR)/build/ndrone-$(_PKGID).tar" *
+deploy: build $(OUT)/package.json $(OUT)/npm-shrinkwrap.json
+	cd $(OUT) && tar -cf ndrone-embed.tar $(shell ls $(OUT) | grep -v client)
+	scp $(OUT)/ndrone-embed.tar '$(RTARGET):$(RPATH)/ndrone.tar'
+	ssh $(RTARGET) 'cd $(RPATH) && tar -xvf ndrone.tar > /dev/null && rm ndrone.tar'
+	rm $(OUT)/ndrone-embed.tar
 
 lint:
 	$(foreach file, $(shell find libs embed client shared -name '*.ts'), \
@@ -96,7 +88,7 @@ setup\:tsd update\:tsd:
 	$(foreach name, $(TSDLIST), $(call load,$(name))$(\n))
 
 tree:
-	@tree -CFa --dirsfirst -I '.git|node_modules|definitions|build' | head -n -2
+	@tree -CFa --dirsfirst -I '.git|node_modules|definitions' | head -n -2
 
 labels:
 	@egrep -Hnor --include '*.ts' '//#(TODO|FIXME|XXX):.*' libs embed client shared |\
@@ -107,8 +99,7 @@ labels:
 		' | sort
 
 clean:
-	rm -rf build
-	rm -rf /tmp/ndrone
+	rm -rf $(OUT)/ 2> /dev/null
 
 #### Misc
 define \n

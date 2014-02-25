@@ -1,0 +1,18 @@
+{
+    "name" : "ndrone",
+    "main" : "index.html",
+    "node-main" : "index.js",
+
+    "window" : {
+        "title"     : "ndrone client",
+        "toolbar"   : false,
+        "frame"     : true,
+        "resizable" : false,
+        "width"     : 1280,
+        "height"    : 720,
+        "position"  : "mouse"
+    },
+
+    "single-instance" : true,
+    "chromium-args" : "--ignore-gpu-blacklist"
+}

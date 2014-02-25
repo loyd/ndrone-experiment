@@ -3,17 +3,17 @@ ndrone
 Quadrocopter based on nodejs.
 
                     ┌─────────────────┐
-                      ndrone [master]
+                       main [master]
                      ────────────────
                      • availability
                      • communication
                     └─────────────────┘
     ┌─────────────────┐              ┌─────────────────┐               ┌──────────────────┐
-      flight [worker]      state         fpv [worker]    video & state   client [browser]  
-     ─────────────────  ═══════════>  ─────────────────  ════════════>  ────────────────── 
-     • sensors                        • capture                          • video decoding  
-     • stabilization    <═══════════  • video encoding   <════════════   • OSD             
-     • rotors control      control    • server              control      • driving         
+      flight [worker]      state         fpv [worker]    video & state    index [master]
+     ─────────────────  ═══════════>  ─────────────────  ════════════>  ──────────────────
+     • sensors                        • capture                          • video decoding
+     • stabilization    <═══════════  • video encoding   <════════════   • OSD
+     • rotors control      control    • server              control      • driving
     └─────────────────┘              └─────────────────┘               └──────────────────┘
 
 Start development
@@ -22,17 +22,12 @@ Start development
 
 Use `make`:
 ```sh
-#### Targets
-make                  # same as `make package`
-make package          # build project to `/tmp/ndrone/` and pack into `build/`
-make build            # build project to `build/`
-make build/embed      # build embedded part to `build/embed`
-make build/client     # build client part to `build/client`
-
-#### Tasks
+make                  # same as `make deploy`
+make build            # build project to `/tmp/ndrone/` (by default)
+make deploy           # build and deploy project to raspi@ndrone:/home/ndrone (by default)
 make setup[:nm|:tsd]  # development environment setup
 make update[:nm|:tsd] # development environment update
-make lint             # use tslint to check `libs/`, `embed/` and `client/`
+make lint             # use tslint to check `libs/`, `embed/`, `client/` and `shared/`
 make tree             # print structure of project
 make labels           # generate list of #TODOs, #FIXMEs and #XXXs
 make clean            # get rid of the garbage
