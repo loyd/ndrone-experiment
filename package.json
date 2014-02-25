@@ -1,7 +1,7 @@
 {
     "name"        : "ndrone",
     "description" : "Quadrocopter based on nodejs.",
-    "version"     : "0.0.0",
+    "version"     : "0.1.0",
     "keywords"    : ["copter"],
 
     "contributors" : [
@@ -19,13 +19,13 @@
     },
 
     "devDependencies" : {
-        "typescript" : "0.9",
-        "tslint" : ">=0.3"
+        "typescript" : ">=0.9",
+        "tslint" : ">=0.4"
     },
 
     "dependencies" : {
         "ffi" : "~1",
-        "ref" : "*",
+        "ref" : "~0.1",
         "ref-array"  : "*",
         "ref-struct" : "*",
         "ref-union"  : "*",
