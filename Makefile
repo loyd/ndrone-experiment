@@ -14,8 +14,7 @@ TSDREPO = http://github.com/borisyankov/DefinitelyTyped/raw/master
 TSDDIR = definitions
 
 TSDLIST = node \
-          node-ffi \
-          ws
+          node-ffi
 
 #### Parts
 EMBED = embed/main.ts \
@@ -66,7 +65,7 @@ $(OUT)/npm-shrinkwrap.json: package.json
 build: $(OUT)/embed $(OUT)/client
 
 deploy: build $(OUT)/package.json $(OUT)/npm-shrinkwrap.json
-	cd $(OUT) && tar -cf ndrone-embed.tar $(shell ls $(OUT) | grep -v client)
+	cd $(OUT) && tar -cf ndrone-embed.tar $(shell ls $(OUT) | grep -vP 'client|node_modules')
 	scp $(OUT)/ndrone-embed.tar '$(RTARGET):$(RPATH)/ndrone.tar'
 	ssh $(RTARGET) 'cd $(RPATH) && tar -xvf ndrone.tar > /dev/null && rm ndrone.tar'
 	rm $(OUT)/ndrone-embed.tar
