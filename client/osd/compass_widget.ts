@@ -5,12 +5,6 @@ import Widget = require('./widget');
 class CompassWidget extends Widget {
     constructor(rate: number, options: {path: string; width?: number; height?: number}[]) {
         super(rate, options);
-
-        this.canvas.width  = this.textures[0].width/2;
-        this.canvas.height = this.textures[1].height;
-
-        this.canvas.style.left = (window.innerWidth - this.canvas.width)/2 + 'px';
-        this.canvas.style.top  = 0 + 'px';
     }
 
     public update(data: {yaw: number}) {
@@ -28,6 +22,16 @@ class CompassWidget extends Widget {
         cx.drawImage(this.textures[0],   qbw*(b + 1), a, bw, bh);
         cx.drawImage(this.textures[0],   qbw*(b - 3), a, bw, bh);
         cx.drawImage(this.textures[1], (bw/2 - cw)/2, 0, cw, ch);
+    }
+
+    public appear() {
+        this.canvas.width  = this.textures[0].width/2;
+        this.canvas.height = this.textures[1].height;
+
+        this.canvas.style.left = (window.innerWidth - this.canvas.width)/2 + 'px';
+        this.canvas.style.top  = 0 + 'px';
+
+        this.update({yaw : 0});
     }
 }
 

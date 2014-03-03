@@ -11,11 +11,11 @@ class LoadWidget extends Widget {
     constructor(rate: number) {
         super(rate);
 
-        this.canvas.width  = innerWidth  / 8;
-        this.canvas.height = innerHeight / 8;
+        this.canvas.width  = window.innerWidth  / 8;
+        this.canvas.height = window.innerHeight / 8;
 
-        this.canvas.style.left = 5/16 * innerWidth  + 'px';
-        this.canvas.style.top  = 7/8  * innerHeight + 'px';
+        this.canvas.style.left = 5/16 * window.innerWidth + 1  + 'px';
+        this.canvas.style.top  = 7/8  * window.innerHeight     + 'px';
 
         this.fifteen = new Smoothie.TimeSeries();
         this.five    = new Smoothie.TimeSeries();

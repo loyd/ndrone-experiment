@@ -40,8 +40,6 @@ class OSD {
         this.cpumem = new CPUMEMWidget(rate);
         this.load   = new LoadWidget(rate);
         this.temp   = new TempWidget(rate);
-
-        this.update([1, 0, 0, 0], [0, 0], [0, 0, 0], 50, 50);
     }
 
     public update(quaternion: number[], temp: number[], load: number[], mem: number, cpu: number) {

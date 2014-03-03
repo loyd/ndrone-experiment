@@ -10,11 +10,11 @@ class TempWidget extends Widget {
     constructor(rate: number) {
         super(rate);
 
-        this.canvas.width  = innerWidth  / 8;
-        this.canvas.height = innerHeight / 8;
+        this.canvas.width  = window.innerWidth  / 8;
+        this.canvas.height = window.innerHeight / 8;
 
-        this.canvas.style.left = 9/16 * innerWidth  + 'px';
-        this.canvas.style.top  = 7/8  * innerHeight + 'px';
+        this.canvas.style.left = 9/16 * window.innerWidth  + 'px';
+        this.canvas.style.top  = 7/8  * window.innerHeight + 'px';
 
         this.outside = new Smoothie.TimeSeries();
         this.inside  = new Smoothie.TimeSeries();

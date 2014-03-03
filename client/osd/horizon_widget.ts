@@ -7,12 +7,6 @@ var PI  = Math.PI,
 class HorizonWidget extends Widget {
     constructor(rate:number, options: {path: string; width?: number; height?: number}[]) {
         super(rate, options);
-
-        this.canvas.width  = this.textures[2].width;
-        this.canvas.height = this.textures[2].height;
-
-        this.canvas.style.left = (window.innerWidth  - this.canvas.width )/2 + 'px';
-        this.canvas.style.top  = (window.innerHeight - this.canvas.height)/2 + 'px';
     }
 
     public update(data: {pitch: number; roll: number}) {
@@ -38,6 +32,17 @@ class HorizonWidget extends Widget {
         cx.restore();
         cx.drawImage(this.textures[1], hbw-cw/2, hbw-ch/2, cw, ch);
         cx.drawImage(this.textures[2],        0,        0, fw, fh);
+    }
+
+    public appear() {
+        console.log(this.textures[2].width, this.textures[2].height);
+        this.canvas.width  = this.textures[2].width;
+        this.canvas.height = this.textures[2].height;
+
+        this.canvas.style.left = (window.innerWidth  - this.canvas.width )/2 + 'px';
+        this.canvas.style.top  = (window.innerHeight - this.canvas.height)/2 + 'px';
+
+        this.update({pitch : 0, roll : 0});
     }
 }
 
