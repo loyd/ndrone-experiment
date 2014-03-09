@@ -7,8 +7,8 @@
         "title"     : "ndrone client",
         "toolbar"   : false,
         "frame"     : true,
-        "resizable" : false,
-        "width"     : 1280,
+        "resizable" : true,
+        "width"     : 1080,
         "height"    : 720,
         "position"  : "mouse"
     },
