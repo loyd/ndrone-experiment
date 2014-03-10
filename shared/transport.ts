@@ -2,6 +2,7 @@
 
 import stream = require('stream');
 import net    = require('net');
+import dgram  = require('dgram');
 import assert = require('assert');
 
 export interface TransportOptions {
@@ -113,6 +114,64 @@ export class TcpTransport extends Transport {
         //#TODO: prevent this case or store until connected
         if(!this.isConnected) return cb(null);
         this._socket.write(data, enc, cb);
+    }
+
+    public _read(size: number) {
+        // Ignore request
+    }
+}
+
+export class UdpTransport extends Transport {
+    private _socket: dgram.Socket = null;
+    private _remoteAddr: string;
+    private _remotePort: number;
+
+    constructor(options: TransportOptions) {
+        super(options);
+
+        var socket = this._socket = dgram.createSocket('udp4');
+
+        socket.on('error', (err: Error) => {
+            this.emit('error', err);
+            this.end();
+        });
+
+        this._remoteAddr = this.isServer ? '' : this.host;
+        this._remotePort = this.isServer ?  0 : this.port;
+
+        socket.on('message', (msg: NodeBuffer, info: any) => {
+            if(!this.isConnected) {
+                this._remoteAddr = info.address;
+                this._remotePort = info.port;
+                this.isConnected = true;
+                this.emit('connect');
+            } else if(this._remoteAddr !== info.address
+                   || this._remotePort !== info.port) {
+                //#TODO: add sending error
+                return;
+            }
+
+            this.push(msg);
+        });
+
+        socket.bind(this.port);
+        this._socket = socket;
+    }
+
+    public end() {
+        super.end.apply(this, arguments);
+        this._socket.close();
+    }
+
+    /*
+        Implementation of stream's template methods
+     */
+
+    public _write(data: any, enc: string, cb: Function) {
+        //#TODO: prevent this case or store until connected
+        if(!this.isConnected) return cb(null);
+        this._socket.send(data, 0, data.length,
+            this._remotePort, this._remoteAddr, cb);
     }
 
     public _read(size: number) {
