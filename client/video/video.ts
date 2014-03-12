@@ -94,7 +94,7 @@ class Video {
             var realHeight  = viewWidth / ratio | 0,
                 deltaHeight = viewHeight - realHeight;
 
-            style.width  = viewWidth + 'px';
+            style.width  = viewWidth  + 'px';
             style.height = realHeight + 'px';
             style.top = (deltaHeight/2 | 0) + 'px';
             style.left = '0';
@@ -103,7 +103,7 @@ class Video {
                 deltaWidth = viewWidth - realWidth;
 
             style.height = viewHeight + 'px';
-            style.width  = realWidth + 'px';
+            style.width  = realWidth  + 'px';
             style.left = (deltaWidth/2 | 0) + 'px';
             style.top = '0';
         }

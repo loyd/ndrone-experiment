@@ -6,7 +6,7 @@ import config    = require('../../config');
 import transport = require('../../shared/transport');
 
 var tcpVideo = new transport.TcpTransport({
-    port : config.FPV_VIDEO_PORT,
+    port    : config.FPV_VIDEO_PORT,
     timeout : config.FPV_VIDEO_TIMEOUT
 });
 
@@ -15,8 +15,8 @@ var raspivid: child.ChildProcess;
 //#XXX: bad abstraction for streaming
 tcpVideo.on('connect', () => {
     var opts = [
-        '-w', config.FPV_VIDEO_WIDTH,
-        '-h', config.FPV_VIDEO_HEIGHT,
+        '-w',   config.FPV_VIDEO_WIDTH,
+        '-h',   config.FPV_VIDEO_HEIGHT,
         '-fps', config.FPV_VIDEO_FPS,
         '-t', '0',
         '-vs',
