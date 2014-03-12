@@ -13,7 +13,7 @@ var lib = new ffi.Library(null, {
 
 var I2C_SLAVE = 0x703;
 
-class AfroESC { 
+class AfroESC {
     private static SEND_INTERVAL = 40;
     private static FULL_POWER    = 247;
 
@@ -23,7 +23,7 @@ class AfroESC {
     private _loop:   NodeTimer;
     private _fd: number;
  
-    constructor(bus: string, address: number) { 
+    constructor(bus: string, address: number) {
         if (!(address && bus))
             throw new Error('Invalid parameters for setup');
  

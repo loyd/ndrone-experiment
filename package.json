@@ -28,7 +28,6 @@
         "ref" : "~0.1",
         "ref-array"  : "*",
         "ref-struct" : "*",
-        "ref-union"  : "*",
-        "ws" : "~0.4"
+        "ref-union"  : "*"
     }
 }

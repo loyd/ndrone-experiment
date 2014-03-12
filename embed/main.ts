@@ -2,16 +2,10 @@
 /// <reference path="../definitions/node-ffi/node-ffi.d.ts" />
 "use strict";
 
-declare var de: boolean;
-declare var mand: typeof assert;
-
 import assert  = require('assert');
 import cluster = require('cluster');
 import os      = require('os');
 import config  = require('../config');
-
-global.mand = assert;
-global.de   = 'DEBUG' in process.env;
 
 if(cluster.isMaster) {
     process.title = 'ndrone';
@@ -86,7 +80,7 @@ if(cluster.isMaster) {
     run.fpv();
 } else {
     var role: string = process.env['ROLE'];
-    de&&mand(~['flight', 'fpv'].indexOf(role));
+    assert(~['flight', 'fpv'].indexOf(role));
     process.title = 'ndrone: ' + role;
 
     process.on('uncaughtException', (err: Error) => {
@@ -95,6 +89,7 @@ if(cluster.isMaster) {
     });
 
     require('./' + role + '/' + role);
+    console.log('%s is up.', role);
 }
 
 function dump(err: any) {
