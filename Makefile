@@ -32,12 +32,12 @@ RPATH ?= /home/ndrone
 
 #### Targets
 $(OUT)/embed: $(shell find embed shared libs -name '*.ts') config.ts
-	mkdir -p $@/
+	mkdir -p $@/ && touch $@/
 	$(TSC) $(TSFLAGS) $(EMBED) --outDir $(OUT)/
 
 $(OUT)/client: $(shell find client shared libs -name '*.ts') config.ts \
                $(addprefix $(OUT)/, $(shell find client -type f ! -name '*.ts'))
-	mkdir -p $@/
+	mkdir -p $@/ && touch $@/
 	$(TSC) $(TSFLAGS) $(CLIENT) --outDir $(OUT)/
 	ln -fs $(CURDIR)/node_modules $(OUT)/node_modules
 
