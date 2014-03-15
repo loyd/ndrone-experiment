@@ -21,8 +21,8 @@
  *         l'ₓ = max(lₓ·100; 255)
  *             where lₓ — load average during the last x minutes
  *
- *     m — memory usage in %
- *     c — cpu usage in %
+ *     m — memory usage
+ *     c — cpu usage
  *
  *
  * Control
@@ -95,8 +95,8 @@ export class Encoder extends stream.Readable {
         assert(-128 <= temps.outside && temps.outside <= 127);
         assert(load.length === 3);
         assert(load.every((comp) => comp >= 0));
-        assert(0 <= data.memory && data.memory <= 100);
-        assert(0 <= data.cpu && data.cpu <= 100);
+        assert(0 <= data.memory && data.memory <= 1);
+        assert(0 <= data.cpu && data.cpu <= 1);
 
         for(var i = 0; i < 4; ++i) {
             var val = attitude[i] * 1e4;
@@ -109,8 +109,8 @@ export class Encoder extends stream.Readable {
         buf[10] = Math.min(load[0] * 100, 255);
         buf[11] = Math.min(load[1] * 100, 255);
         buf[12] = Math.min(load[2] * 100, 255);
-        buf[13] = data.memory;
-        buf[14] = data.cpu;
+        buf[13] = data.memory * 100;
+        buf[14] = data.cpu * 100;
 
         this.push(this._stateBk);
     }
@@ -165,8 +165,8 @@ export class Decoder extends stream.Writable {
         };
 
         state.load = [data[10]/100, data[11]/100, data[12]/100];
-        state.memory = Math.min(data[13], 100);
-        state.cpu    = Math.min(data[14], 100);
+        state.memory = data[13] / 100;
+        state.cpu    = data[14] / 100;
 
         this.emit('state', state);
     }
