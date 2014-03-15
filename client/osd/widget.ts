@@ -11,46 +11,50 @@ class Widget {
     private loaded: number;
     private factor: number;
 
-    constructor(rate: number, options?: {path: string; factor?: number}[]) {
-        this.canvas = window.document.createElement('canvas');
-        this.canvas.className = 'widget';
+    constructor(rate: number, canvas: HTMLCanvasElement) {
+        canvas.className = 'widget';
+        this.context = canvas.getContext('2d');
+        this.canvas  = canvas;
 
-        this.context = this.canvas.getContext('2d');
+        var textures = (<any> this).constructor._TEXTURES;
 
-        if(options) {
-            this.loaded = 0;
-            this.toload = options.length;
-            options.forEach((entry, i) => {
-                var texture: HTMLImageElement,
-                    factor:  number = entry.factor || 1;
+        if(textures)
+            this._loadTextures(textures);
 
-                texture = new window["Image"]();
-                texture.onload = this.prepare.bind(this, texture, entry.factor);
-                texture.src    = entry.path;
-
-                this.textures[i] = texture;
-            });
-        }
-
-        window.document.body.appendChild(this.canvas);
+        window.addEventListener("resize", this._appear.bind(this));
     }
 
     public update(data: any) {
         throw new Error('Abstract update called');
     }
 
-    public appear() {
+    public _appear() {
         throw new Error('Abstract appearance called');
     }
 
-    private prepare(texture: HTMLImageElement, factor: number) {
+    public _loadTextures(textures: {path: string; factor?: number}[]) {
+        this.loaded = 0;
+        this.toload = textures.length;
+        textures.forEach((entry, i) => {
+            var texture: HTMLImageElement,
+                factor:  number = entry.factor || 1;
+
+            texture = new (<any> window).Image;
+            texture.onload = this._prepareTextures.bind(this, texture, entry.factor);
+            texture.src    = entry.path;
+
+            this.textures[i] = texture;
+        });
+    }
+
+    private _prepareTextures(texture: HTMLImageElement, factor: number) {
         this.loaded++;
 
         texture.width  = texture.naturalWidth  * factor;
         texture.height = texture.naturalHeight * factor;
 
         if(this.loaded === this.toload)
-            this.appear();
+            this._appear();
     }
 }
 
