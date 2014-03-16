@@ -120,7 +120,7 @@ class Video {
             (<any> buf.set)(data, 0);
 
             /*
-                Don't use `requestAnumationFrame`, because his rate is 60Hz.
+                Don't use `requestAnimationFrame`, because his rate is 60Hz.
                 Thus, we can get an additional delay of up to 17ms.
              */
             ctx.putImageData(imageData, 0, 0);

@@ -55,7 +55,7 @@ if(cluster.isMaster) {
                 flight = mock;
                 run.flight();
             });
-            flight.on('message', (data: string) => fpv.send(data));
+            flight.on('message', (data: any) => fpv.send(data));
         }),
 
         fpv : throttle(() => {
@@ -72,7 +72,7 @@ if(cluster.isMaster) {
                 fpv = mock;
                 run.fpv();
             });
-            fpv.on('message', (data: string) => flight.send(data));
+            fpv.on('message', (data: any) => flight.send(data));
         })
     };
 

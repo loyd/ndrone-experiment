@@ -9,7 +9,7 @@ Quadrocopter based on nodejs.
                      • communication
                     └─────────────────┘
     ┌─────────────────┐              ┌─────────────────┐               ┌──────────────────┐
-      flight [worker]      state         fpv [worker]    video & state    index [master]
+      flight [worker]     navdata        fpv [worker]    video & state    index [master]
      ─────────────────  ═══════════>  ─────────────────  ════════════>  ──────────────────
      • sensors                        • capture                          • video decoding
      • stabilization    <═══════════  • video encoding   <════════════   • OSD

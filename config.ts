@@ -8,6 +8,9 @@ export var DOMAIN = 'ndrone';
 /** Minimum time (natural number) between restarts workers */
 export var WORKER_RESTART_TIMEOUT = 500;
 
+/** Frequency of info (navdata, state and control) barter */
+export var MAIN_FREQUENCY = 50;
+
 /** TCP port (1..65535) for video transferring */
 export var FPV_VIDEO_PORT = 8081;
 
@@ -20,14 +23,13 @@ export var FPV_INFO_PORT = 8082;
 /** Maximum timeout between activity on UDP socket */
 export var FPV_INFO_TIMEOUT = 1000;
 
-
 /*
     Video
  */
 
-export var FPV_VIDEO_WIDTH = 853;
-export var FPV_VIDEO_HEIGHT = 480;
-export var FPV_VIDEO_FPS = 25;
+export var FPV_VIDEO_WIDTH = 1024;
+export var FPV_VIDEO_HEIGHT = 576;
+export var FPV_VIDEO_FPS = 24;
 
 /** Bitrate (bit/s) of video stream. Set to 0 to disable control */
 export var FPV_VIDEO_BITRATE = 2e6;
