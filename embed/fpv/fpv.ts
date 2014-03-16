@@ -4,6 +4,46 @@ import child     = require('child_process');
 import assert    = require('assert');
 import config    = require('../../config');
 import transport = require('../../shared/transport');
+import protocol  = require('../../shared/protocol');
+import vcgencmd  = require('../../libs/vcgencmd');
+import sysinfo   = require('../../libs/sysinfo');
+
+/*
+    State
+ */
+
+var udpState = new transport.UdpTransport({
+    port    : config.FPV_INFO_PORT,
+    timeout : config.FPV_INFO_TIMEOUT
+});
+
+udpState.on('connect', () => {
+    var encoder = new protocol.Encoder;
+    encoder.pipe(udpState);
+
+    var temps = {inside : 0, outside : 0};
+    setInterval(() => {
+        vcgencmd.measureTemp((err, res?) => {
+            //#TODO: add error logging
+            if(err) return;
+            temps.inside = temps.outside = res;
+        });
+    }, config.MAIN_FREQUENCY);
+
+    process.on('message', (navdata: number[]) => {
+        encoder.encode({
+            attitude : navdata,
+            temperatures : temps,
+            load   : sysinfo.load(),
+            cpu    : sysinfo.cpuUsage(),
+            memory : sysinfo.memUsage()
+        });
+    });
+});
+
+/*
+    Video
+ */
 
 var tcpVideo = new transport.TcpTransport({
     port    : config.FPV_VIDEO_PORT,
