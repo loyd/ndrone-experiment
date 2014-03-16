@@ -38,11 +38,9 @@ class OSD {
     }) {
         this._compass = new CompassWidget(elements.compass);
         this._horizon = new HorizonWidget(elements.horizon);
-        this._cpumem  = new  CPUMEMWidget(elements.cpumem);
-        this._load    = new    LoadWidget(elements.load);
-        this._temp    = new    TempWidget(elements.temp);
-
-        this.position();
+        this._cpumem  = new CPUMEMWidget(elements.cpumem);
+        this._load    = new LoadWidget(elements.load);
+        this._temp    = new TempWidget(elements.temp);
     }
 
     public update(attitude: number[],
@@ -62,31 +60,6 @@ class OSD {
         });
     }
 
-    public position() {
-        this._compass.setPositioner(function() {
-            return [(window.innerWidth - this.canvas.width)/2, 0];
-        });
-
-        this._horizon.setPositioner(function() {
-            return [(window.innerWidth  - this.canvas.width)/2,
-                    (window.innerHeight - this.canvas.width)/2];
-        });
-
-        this._cpumem.setPositioner(function() {
-            return [(window.innerWidth  - 3*this.canvas.width)/2,
-                     window.innerHeight - this.canvas.height];
-        });
-
-        this._load.setPositioner(function() {
-            return [(window.innerWidth  - this.canvas.width)/2,
-                     window.innerHeight - this.canvas.height];
-        });
-
-        this._temp.setPositioner(function() {
-            return [(window.innerWidth  + this.canvas.width)/2,
-                     window.innerHeight - this.canvas.height];
-        });                
-    }
 }
 
 export = OSD;
