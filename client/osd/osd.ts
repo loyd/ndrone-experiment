@@ -6,6 +6,8 @@ import CPUMEMWidget  = require('./cpumem_widget');
 import LoadWidget    = require('./load_widget');
 import TempWidget    = require('./temp_widget');
 
+import Protocol = require('../../shared/protocol');
+
 var atan2 = Math.atan2,
     asin  = Math.asin;
 function quaternionToEuler(quaternion: number[]) {
@@ -43,20 +45,16 @@ class OSD {
         this._temp    = new TempWidget(elements.temp);
     }
 
-    public update(attitude: number[],
-                  temperatures: {inside: number; outside: number},
-                  load: number[],
-                  memory:  number,
-                  cpu:  number ) {
-        var angles = quaternionToEuler(attitude);
+    public update(data: Protocol.IState) {
+        var angles = quaternionToEuler(data.attitude);
 
         window.requestAnimationFrame(() => {
             this._compass.update(angles[0]);
             this._horizon.update(angles[1], angles[2]);
 
-            this._cpumem.update(cpu, memory);
-            this._load  .update(load);
-            this._temp  .update(temperatures);
+            this._cpumem.update(data.cpu, data.memory);
+            this._load.update(data.load);
+            this._temp.update(data.temperatures);
         });
     }
 
