@@ -35,8 +35,8 @@ var buffer = new Buffer(MSGBUF_SIZE),
     state: EStates = EStates.IDLE;
 
 var queue = {
-    head : null,
-    tail : null,
+    head : <any> null,
+    tail : <any> null,
 
     enqueue(data: IArguments) {
         if(this.tail)
