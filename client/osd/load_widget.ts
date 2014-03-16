@@ -8,10 +8,8 @@ class LoadWidget extends Widget {
     private _five:    Smoothie.TimeSeries;
     private _one:     Smoothie.TimeSeries;
 
-    constructor(rate: number, canvas: HTMLCanvasElement) {
-        super(rate, canvas);
-
-        this._appear();
+    constructor(canvas: HTMLCanvasElement) {
+        super(canvas);
 
         this._fifteen = new Smoothie.TimeSeries();
         this._five    = new Smoothie.TimeSeries();
@@ -43,24 +41,16 @@ class LoadWidget extends Widget {
             fillStyle   : 'rgba( 64, 0, 0, 0.25)'
         });
 
-        chart.streamTo(this.canvas, rate);
+        chart.streamTo(this.canvas);
         chart.addTimeSeries(this._fifteen);
         chart.addTimeSeries(this._five);
         chart.addTimeSeries(this._one);
     }
 
-    public update(data: {one: number; five: number; fifteen: number}) {
-        this._fifteen.append(Date.now(), data.fifteen);
-        this._five   .append(Date.now(), data.five);
-        this._one    .append(Date.now(), data.one);
-    }
-
-    public _appear() {
-        this.canvas.width  = window.innerWidth  / 8;
-        this.canvas.height = window.innerHeight / 8;
-
-        this.canvas.style.left = 5/16 * window.innerWidth + 1  + 'px';
-        this.canvas.style.top  = 7/8  * window.innerHeight     + 'px';
+    public update(data: number[]) {
+        this._fifteen.append(Date.now(), data[0]);
+        this._five.append(Date.now(), data[1]);
+        this._one.append(Date.now(), data[2]);
     }
 }
 

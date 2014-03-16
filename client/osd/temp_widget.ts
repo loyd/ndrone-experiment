@@ -7,10 +7,8 @@ class TempWidget extends Widget {
     private _outside: Smoothie.TimeSeries;
     private _inside:  Smoothie.TimeSeries;
 
-    constructor(rate: number, canvas: HTMLCanvasElement) {
-        super(rate, canvas);
-
-        this._appear();
+    constructor(canvas: HTMLCanvasElement) {
+        super(canvas);
 
         this._outside = new Smoothie.TimeSeries();
         this._inside  = new Smoothie.TimeSeries();
@@ -34,22 +32,14 @@ class TempWidget extends Widget {
             fillStyle   : 'rgba(0,  64, 0, 0.25)'
         });
 
-        chart.streamTo(this.canvas, rate);
+        chart.streamTo(this.canvas);
         chart.addTimeSeries(this._outside);
         chart.addTimeSeries(this._inside);
     }
 
     public update(data: {inside: number; outside: number}) {
         this._outside.append(Date.now(), data.outside);
-        this._inside .append(Date.now(), data.inside);
-    }
-
-    public _appear() {
-        this.canvas.width  = window.innerWidth  / 8;
-        this.canvas.height = window.innerHeight / 8;
-
-        this.canvas.style.left = 9/16 * window.innerWidth  + 'px';
-        this.canvas.style.top  = 7/8  * window.innerHeight + 'px';
+        this._inside.append(Date.now(), data.inside);
     }
 }
 

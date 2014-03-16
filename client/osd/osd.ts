@@ -23,35 +23,69 @@ function quaternionToEuler(quaternion: number[]) {
 }
 
 class OSD {
-    private compass: CompassWidget;
-    private horizon: HorizonWidget;
-    private cpumem:  CPUMEMWidget;
-    private load:    LoadWidget;
-    private temp:    TempWidget;
+    private _compass: CompassWidget;
+    private _horizon: HorizonWidget;
+    private _cpumem:  CPUMEMWidget;
+    private _load:    LoadWidget;
+    private _temp:    TempWidget;
 
-    constructor(rate: number,
-                elements: {
+    constructor(elements: {
                     compass: HTMLCanvasElement;
                     horizon: HTMLCanvasElement;
                     cpumem:  HTMLCanvasElement;
                     load:    HTMLCanvasElement;
-                    temp:    HTMLCanvasElement;}) {
-        this.compass = new CompassWidget(rate, elements.compass);
-        this.horizon = new HorizonWidget(rate, elements.horizon);
-        this.cpumem  = new  CPUMEMWidget(rate, elements.cpumem);
-        this.load    = new    LoadWidget(rate, elements.load);
-        this.temp    = new    TempWidget(rate, elements.temp);
+                    temp:    HTMLCanvasElement
+    }) {
+        this._compass = new CompassWidget(elements.compass);
+        this._horizon = new HorizonWidget(elements.horizon);
+        this._cpumem  = new  CPUMEMWidget(elements.cpumem);
+        this._load    = new    LoadWidget(elements.load);
+        this._temp    = new    TempWidget(elements.temp);
+
+        this.position();
     }
 
-    public update(quaternion: number[], temp: number[], load: number[], mem: number, cpu: number) {
-        var angles = quaternionToEuler(quaternion);
+    public update(attitude: number[],
+                  temperatures: {inside: number; outside: number},
+                  load: number[],
+                  memory:  number,
+                  cpu:  number ) {
+        var angles = quaternionToEuler(attitude);
 
-        this.compass.update({yaw   : angles[0]});
-        this.horizon.update({pitch : angles[1], roll : angles[2]});
+        window.requestAnimationFrame(() => {
+            this._compass.update(angles[0]);
+            this._horizon.update(angles[1], angles[2]);
 
-        this.cpumem.update({cpu : cpu, mem : mem});
-        this.load  .update({one : load[0], five : load[1], fifteen : load[2]});
-        this.temp  .update({outside : temp[0], inside : temp[1]});
+            this._cpumem.update(cpu, memory);
+            this._load  .update(load);
+            this._temp  .update(temperatures);
+        });
+    }
+
+    public position() {
+        this._compass.setPositioner(function() {
+            return [(window.innerWidth - this.canvas.width)/2, 0];
+        });
+
+        this._horizon.setPositioner(function() {
+            return [(window.innerWidth  - this.canvas.width)/2,
+                    (window.innerHeight - this.canvas.width)/2];
+        });
+
+        this._cpumem.setPositioner(function() {
+            return [(window.innerWidth  - 3*this.canvas.width)/2,
+                     window.innerHeight - this.canvas.height];
+        });
+
+        this._load.setPositioner(function() {
+            return [(window.innerWidth  - this.canvas.width)/2,
+                     window.innerHeight - this.canvas.height];
+        });
+
+        this._temp.setPositioner(function() {
+            return [(window.innerWidth  + this.canvas.width)/2,
+                     window.innerHeight - this.canvas.height];
+        });                
     }
 }
 

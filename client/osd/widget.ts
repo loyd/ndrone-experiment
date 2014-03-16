@@ -2,29 +2,24 @@
 
 class Widget {
     public canvas:   HTMLCanvasElement;
-    public context:  CanvasRenderingContext2D;
-    public textures: HTMLImageElement[] = [];
 
-    public rate: number;
+    public _textures: any = {};
+    public _context:  CanvasRenderingContext2D;
 
-    private toload: number;
-    private loaded: number;
-    private factor: number;
+    private _toload: number;
+    private _loaded: number;
 
-    constructor(rate: number, canvas: HTMLCanvasElement) {
-        canvas.className = 'widget';
-        this.context = canvas.getContext('2d');
-        this.canvas  = canvas;
+    constructor(canvas: HTMLCanvasElement) {
+        this._context = canvas.getContext('2d');
+        this.canvas   = canvas;
 
         var textures = (<any> this).constructor._TEXTURES;
 
         if(textures)
             this._loadTextures(textures);
-
-        window.addEventListener("resize", this._appear.bind(this));
     }
 
-    public update(data: any) {
+    public update(...data: any[]) {
         throw new Error('Abstract update called');
     }
 
@@ -32,28 +27,34 @@ class Widget {
         throw new Error('Abstract appearance called');
     }
 
-    public _loadTextures(textures: {path: string; factor?: number}[]) {
-        this.loaded = 0;
-        this.toload = textures.length;
-        textures.forEach((entry, i) => {
+    private _loadTextures(textures: {path: string; factor?: number}[]) {
+        this._loaded = 0;
+        this._toload = Object.keys(textures).length;
+
+        var bw = (<any> this).constructor._BASE_WIDTH,
+            bh = (<any> this).constructor._BASE_HEIGHT,
+            sx = this.canvas.width/bw,
+            sy = this.canvas.height/bh;
+
+        for (var entry in textures) if(textures.hasOwnProperty(entry)) {
             var texture: HTMLImageElement,
                 factor:  number = entry.factor || 1;
 
             texture = new (<any> window).Image;
-            texture.onload = this._prepareTextures.bind(this, texture, entry.factor);
-            texture.src    = entry.path;
+            texture.onload = this._prepareTextures.bind(this, texture, sx, sy);
+            texture.src    = textures[entry].path;
 
-            this.textures[i] = texture;
-        });
+            this._textures[entry] = texture;
+        };
     }
 
-    private _prepareTextures(texture: HTMLImageElement, factor: number) {
-        this.loaded++;
+    private _prepareTextures(texture: HTMLImageElement, sx: number, sy: number) {
+        this._loaded++;
 
-        texture.width  = texture.naturalWidth  * factor;
-        texture.height = texture.naturalHeight * factor;
+        texture.width  = texture.naturalWidth  * sx;
+        texture.height = texture.naturalHeight * sy;
 
-        if(this.loaded === this.toload)
+        if(this._loaded === this._toload)
             this._appear();
     }
 }
