@@ -122,9 +122,11 @@ export class TcpTransport extends Transport {
 }
 
 export class UdpTransport extends Transport {
+    //#TODO: implement timeout support
+
     private _socket: dgram.Socket = null;
-    private _remoteAddr: string;
-    private _remotePort: number;
+    private _remoteAddr: string = '';
+    private _remotePort: number = 0;
 
     constructor(options: TransportOptions) {
         super(options);
@@ -136,17 +138,14 @@ export class UdpTransport extends Transport {
             this.end();
         });
 
-        this._remoteAddr = this.isServer ? '' : this.host;
-        this._remotePort = this.isServer ?  0 : this.port;
-
         socket.on('message', (msg: NodeBuffer, info: any) => {
             if(!this.isConnected) {
-                this._remoteAddr = info.address;
-                this._remotePort = info.port;
-                this.isConnected = true;
-                this.emit('connect');
-            } else if(this._remoteAddr !== info.address
-                   || this._remotePort !== info.port) {
+                this._handshake(info.address, info.port);
+                return;
+            }
+            
+            // Reject messages from other clients
+            if(this._remoteAddr !== info.address || this._remotePort !== info.port) {
                 //#TODO: add sending error
                 return;
             }
@@ -155,12 +154,26 @@ export class UdpTransport extends Transport {
         });
 
         socket.bind(this.port);
+
+        // Initialize handshake if client
+        if(!this.isServer)
+            socket.send(new Buffer(1), 0, 1, this.port, this.host);
+
         this._socket = socket;
     }
 
     public end() {
         super.end.apply(this, arguments);
         this._socket.close();
+    }
+
+    private _handshake(address: string, port: number) {
+        this._remoteAddr = address;
+        this._remotePort = port;
+        this.isConnected = true;
+        if(this.isServer)
+            this._socket.send(new Buffer(1), 0, 1, port, address);
+        this.emit('connect');
     }
 
     /*
