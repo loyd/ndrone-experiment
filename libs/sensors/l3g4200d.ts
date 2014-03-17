@@ -82,7 +82,7 @@ class L3G4200D extends Sensor {
         this.write(new Buffer([0x24, 0x00]), 2);
 
         this.rate = this.rate || datasheet.rate.default;
-        this.gain = 2*this.rate/65536;
+        this.gain = 2*this.rate/65536 * Math.PI/180;
     }
 
     public finalize() {
