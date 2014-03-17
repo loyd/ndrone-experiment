@@ -97,7 +97,7 @@ class Sensor extends events.EventEmitter {
  
     public tune(options: any) {
         var datasheet = (<any> this).constructor.DATASHEET,
-            sending   = {};
+            sending: any = {};
  
         for(var option in datasheet) if(datasheet.hasOwnProperty(option)) {
             var entry = datasheet[option];
@@ -107,7 +107,7 @@ class Sensor extends events.EventEmitter {
                 if(!(<any>level in entry))
                     throw new Error('Invalid option level for sensor');
 
-                this[option] = level;
+                (<any> this)[option] = level;
             }
 
             sending[entry.register]  = sending[entry.register] ||
@@ -127,7 +127,7 @@ class Sensor extends events.EventEmitter {
         throw new Error('Abstract method called');
     }
  
-    public stream(type: string, period: number, callback?: Function) {
+    public stream(type: string, period: number, cb?: (err: Error, ...values: number[]) => void) {
         if(period <= 0)
             throw new RangeError('period must be greater than 0');
 
@@ -136,29 +136,30 @@ class Sensor extends events.EventEmitter {
             listeners = Sensor.listenerCount(this, type),
             fire: Function;
 
-        if(callback && listeners === 0) {
+        var aslice = Array.prototype.slice;
+        if(cb && listeners === 0) {
             fire = (/* ...args */) => {
                 var dtime = -(time - (time = Date.now()));
-                callback.apply(this, [].slice.call(arguments).concat(dtime));
+                cb.apply(this, aslice.call(arguments).concat(dtime));
             };
-            this._callbacks[type] = callback;
+            this._callbacks[type] = cb;
         } else {
             var argsBase = [type];
             fire = (/* ...args */) => {
                 var dtime = -(time - (time = Date.now()));
-                this.emit.apply(this, argsBase.concat<any>([].slice.call(arguments), dtime));
+                this.emit.apply(this, argsBase.concat<any>(aslice.call(arguments), dtime));
             };
         }
 
         this._periods[type] = period;
         this._streams[type] = <any> setInterval(() =>
-           (<any> this.measure)(type, fire, buffer),
-        period);
+           (<any> this.measure)(type, fire, buffer)
+        , period);
 
-        if(callback && listeners > 0) this.on(type, callback);
+        if(cb && listeners > 0) this.on(type, cb);
     }
 
-    public on(type: string, callback: Function): events.EventEmitter {
+    public on(type: string, cb?: (err: Error, ...values: number[]) => void) {
         if(!(type in this._streams))
             throw new Error('Event does not exist');
 
@@ -170,7 +171,7 @@ class Sensor extends events.EventEmitter {
             this._callbacks[type] = null;
         }
 
-        return super.on(type, callback);
+        return super.on(type, cb);
     }
  
     public streamOff(type: string) {
