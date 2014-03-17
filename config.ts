@@ -24,6 +24,14 @@ export var FPV_INFO_PORT = 8082;
 export var FPV_INFO_TIMEOUT = 1000;
 
 /*
+    Periphery
+ */
+export var GY80_I2C_BUS = '/dev/i2c-1';
+export var L3G4200D_RATE = 250;
+export var ADXL345_RATE  = 50;
+export var HMC5883L_RATE = 30;
+
+/*
     Video
  */
 
