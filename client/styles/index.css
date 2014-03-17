@@ -1,10 +1,46 @@
 body {
-    margin : 0;
+    margin  : 0;
     padding : 0;
-    overflow : none;
+    overflow : hidden;
     background-color : black;
 }
 
+.widget {
+	position: absolute;
+}
+
 #video {
-    position : absolute;
+    position: absolute;
+}
+
+#compass {
+    top  : 0;
+    left : 50%;
+    margin-left : -260.5px;
+}
+
+#horizon {
+    top  : 50%;
+    left : 50%;
+
+    margin-top  : -256px;
+    margin-left : -256px;
+}
+
+#cpumem {
+    bottom : 0;
+    left   : 50%;
+    margin-left : -192px;
+}
+
+#load {
+    bottom : 0;
+    left   : 50%;
+    margin-left : -64px;
+}
+
+#temp {
+    bottom : 0;
+    left   : 50%;
+    margin-left : 64px;
 }

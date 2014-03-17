@@ -14,7 +14,8 @@ TSDREPO = http://github.com/borisyankov/DefinitelyTyped/raw/master
 TSDDIR = definitions
 
 TSDLIST = node \
-          node-ffi
+          node-ffi \
+          smoothie
 
 #### Parts
 EMBED = embed/main.ts \
