@@ -81,7 +81,7 @@ class BMP085 extends Sensor {
         var datasheet = BMP085.DATASHEET;
 
         this.oss  = options.oss || datasheet.oss.default;
-        this.time = datasheet.time[this.oss] || datasheet.time.default;
+        this.time = (<any> datasheet.time)[this.oss] || datasheet.time.default;
         this.coef = {};
         var bytes = new Buffer(2);
 

@@ -23,7 +23,7 @@ class L3G4200D extends Sensor {
     }
 
     public measure(type: string, callback?: (err: Error, ...values: number[]) => void): any;
-    public measure(type: 'acceleration'): number[];
+    public measure(type: 'velocity'): number[];
     public measure(type: 'temperature'): number;
     public measure(type: string, callback?: any, buffer?: any): any {
         var gain = this.gain;
@@ -35,7 +35,7 @@ class L3G4200D extends Sensor {
 
         buffer = buffer || new Buffer(6);
 
-        if(type === 'acceleration')
+        if(type === 'velocity')
             if(callback)
                 this.read(0x80 | 0x28, 6, buffer, (err: Error, data: NodeBuffer) => {
                     if(err) return callback(err);
@@ -82,7 +82,7 @@ class L3G4200D extends Sensor {
         this.write(new Buffer([0x24, 0x00]), 2);
 
         this.rate = this.rate || datasheet.rate.default;
-        this.gain = 2*this.rate/65536;
+        this.gain = 2*this.rate/65536 * Math.PI/180;
     }
 
     public finalize() {
