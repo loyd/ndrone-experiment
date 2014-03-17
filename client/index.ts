@@ -22,7 +22,7 @@ function onload() {
     var document = window.document;
     var $: (sel: string) => Element = document.querySelector.bind(window.document);
 
-    var osd = new OSD({ 
+    var osd = new OSD({
         compass : <HTMLCanvasElement> $('#compass'),
         horizon : <HTMLCanvasElement> $('#horizon'),
         cpumem  : <HTMLCanvasElement> $('#cpumem'),
@@ -30,9 +30,7 @@ function onload() {
         load    : <HTMLCanvasElement> $('#load'),
     });
 
-    decoder.on('state', (state: Protocol.IState) =>
-        osd.update(state)
-    );
+    decoder.on('state', (state: Protocol.IState) => osd.update(state));
 }
 
 export = onload;

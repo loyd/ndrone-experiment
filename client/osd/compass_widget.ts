@@ -14,7 +14,7 @@ class CompassWidget extends Widget {
     public _textures: {
         body:   HTMLImageElement;
         cursor: HTMLImageElement;
-    }
+    };
 
     public update(yaw: number) {
         var cx = this._context,

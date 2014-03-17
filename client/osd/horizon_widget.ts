@@ -18,7 +18,7 @@ class HorizonWidget extends Widget {
         body:   HTMLImageElement;
         cursor: HTMLImageElement;
         frame:  HTMLImageElement
-    }
+    };
 
     public update(pitch: number, roll: number) {
         var cx = this._context;

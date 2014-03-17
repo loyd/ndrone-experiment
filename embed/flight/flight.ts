@@ -43,5 +43,5 @@ magn.stream('induction', 1/magn.rate, (err, mx, my, mz) => {
     if(err) throw err;
     raw[6] = mx;
     raw[7] = my;
-    raw[8] = mz; 
+    raw[8] = mz;
 });
