@@ -6,11 +6,12 @@ body {
 }
 
 .widget {
-	position: absolute;
+	position : absolute;
+    opacity : 0.5;
 }
 
 #video {
-    position: absolute;
+    position : absolute;
 }
 
 #compass {

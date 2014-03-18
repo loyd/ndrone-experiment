@@ -20,8 +20,8 @@ class CPUMEMWidget extends Widget {
             labels : {
                 precision : 0
             },
-            maxValue :  100,
-            minValue :    0
+            maxValue : 1,
+            minValue : 0
         });
 
         chart.addTimeSeries(this._mem, {

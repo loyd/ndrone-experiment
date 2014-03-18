@@ -31,6 +31,8 @@ function onload() {
     });
 
     decoder.on('state', (state: Protocol.IState) => osd.update(state));
+
+    // var video = new Video(<HTMLCanvasElement> $('#video'));
 }
 
 export = onload;
