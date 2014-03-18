@@ -123,6 +123,7 @@ export class TcpTransport extends Transport {
 
 export class UdpTransport extends Transport {
     //#TODO: implement timeout support
+    //#TODO: implement FIN and 'close' event
 
     private _socket: dgram.Socket = null;
     private _remoteAddr: string = '';

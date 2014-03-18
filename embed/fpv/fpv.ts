@@ -22,15 +22,16 @@ udpState.on('connect', () => {
     encoder.pipe(udpState);
 
     var temps = {inside : 0, outside : 0};
-    setInterval(() => {
+    var vcTimer = <any> setInterval(() => {
         vcgencmd.measureTemp((err, res?) => {
             //#TODO: add error logging
             if(err) return;
             temps.inside = temps.outside = res;
         });
-    }, config.MAIN_FREQUENCY);
+    }, 1e3/config.MAIN_FREQUENCY);
 
-    process.on('message', (navdata: number[]) => {
+    process.on('message', onnavdata);
+    function onnavdata(navdata: number[]) {
         encoder.encode({
             attitude : navdata,
             temperatures : temps,
@@ -38,6 +39,11 @@ udpState.on('connect', () => {
             cpu    : sysinfo.cpuUsage(),
             memory : sysinfo.memUsage()
         });
+    }
+
+    udpState.once('close', () => {
+        clearInterval(vcTimer);
+        process.removeListener('message', onnavdata);
     });
 });
 
