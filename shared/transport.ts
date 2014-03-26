@@ -35,7 +35,7 @@ export class Transport extends stream.Duplex {
 }
 
 export class TcpTransport extends Transport {
-    private _socket: net.NodeSocket = null;
+    private _socket: net.Socket = null;
     private _server: net.Server = null;
     private _expectFIN = false;
 
@@ -44,7 +44,7 @@ export class TcpTransport extends Transport {
 
         if(this.isServer) {
             var server = this._server = net.createServer();
-            server.on('connection', (socket: net.NodeSocket) => {
+            server.on('connection', (socket: net.Socket) => {
                 //#TODO: add sending error
                 if(this.isConnected) return;
                 this._setupSocket(socket);
@@ -73,7 +73,7 @@ export class TcpTransport extends Transport {
         this.isServer ? this._server.close() : this._socket.end();
     }
 
-    private _setupSocket(socket: net.NodeSocket) {
+    private _setupSocket(socket: net.Socket) {
         assert(socket.writable && socket.readable);
 
         if(this.timeout) socket.setTimeout(this.timeout);
