@@ -70,7 +70,7 @@ export class TcpTransport extends Transport {
     public end() {
         this._expectFIN = true;
         super.end.apply(this, arguments);
-        this.isServer ? this._server.close() : this._socket.end();
+        this.isServer ? <any>this._server.close() : this._socket.end();
     }
 
     private _setupSocket(socket: net.Socket) {
