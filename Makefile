@@ -29,7 +29,7 @@ RTARGET ?= raspi@ndrone
 RPATH ?= /home/ndrone
 
 ################################################################################
-.DEFAULT_GOAL = deploy
+.DEFAULT_GOAL = usage
 
 #### Targets
 $(OUT)/embed: $(shell find embed shared libs -name '*.ts') config.ts
@@ -62,6 +62,9 @@ $(OUT)/npm-shrinkwrap.json: package.json
         setup  setup\:nm  setup\:tsd \
         update update\:nm update\:tsd \
         lint tree labels clean
+
+usage:
+	@echo "See Makefile for usage"
 
 build: $(OUT)/embed $(OUT)/client
 
