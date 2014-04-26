@@ -1,6 +1,8 @@
-ndrone
-======
-Quadrocopter based on nodejs.
+ndrone-experiment (discontinued)
+================================
+**Well, the concept really works. However, development is discontinued.**
+
+Software for quadrocopter based on nodejs.
 
                     ┌─────────────────┐
                        main [master]
